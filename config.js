@@ -9,7 +9,7 @@
   const isLocal = ["localhost", "127.0.0.1"].includes(location.hostname)
   const DEMO_ON = new URLSearchParams(location.search).get("demo") === "1"
   // 新しいスプレッドシートの Apps Script を公開したら、そのURLを入れる(推し活サイトとは別)
-  const PRODUCTION_URL = ""
+  const PRODUCTION_URL = "https://script.google.com/macros/s/AKfycbxR731D7_5A_i7b5RoYpfquoM2Esekaw9kyeSN66HmUIS-AMu5dtBCXrA6iR4ClM4NnxQ/exec"
   const DEMO_URL = ""
   // デモ用の Apps Script を作るまでは、?demo=1 を付けても本番につながる(デモの表示にはしない)
   const isDemo = DEMO_ON && !!DEMO_URL
