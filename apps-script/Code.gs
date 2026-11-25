@@ -39,7 +39,7 @@ const COMMENT_HEADERS = ["id", "post_id", "parent_id", "student_id", "display_na
 const ROSTER_HEADERS = ["display_name", "group"]
 const MAX_COMMENT_LENGTH = 200
 const MAX_PHOTO_BYTES = 1500000
-const PHOTO_FOLDER_NAME = "自分満たし写真"
+const PHOTO_FOLDER_NAME = "毎日のお題写真"
 // リアクションの種類(画面側の app.js の REACTIONS と合わせる)
 const REACTION_TYPES = ["like", "understand", "energy", "try"]
 const FEED_LIMIT = 300
