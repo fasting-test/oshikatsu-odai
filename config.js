@@ -10,7 +10,7 @@
   const DEMO_ON = new URLSearchParams(location.search).get("demo") === "1"
   // 新しいスプレッドシートの Apps Script を公開したら、そのURLを入れる(推し活サイトとは別)
   const PRODUCTION_URL = "https://script.google.com/macros/s/AKfycbxR731D7_5A_i7b5RoYpfquoM2Esekaw9kyeSN66HmUIS-AMu5dtBCXrA6iR4ClM4NnxQ/exec"
-  const DEMO_URL = ""
+  const DEMO_URL = "https://script.google.com/macros/s/AKfycbwtbk-M72lBzUjxCRzpqfEj0BI8v5ZBRembkuNwSGx-bP9t2QqOXrORnni9JXAQngjI/exec"
   // デモ用の Apps Script を作るまでは、?demo=1 を付けても本番につながる(デモの表示にはしない)
   const isDemo = DEMO_ON && !!DEMO_URL
   window.APP_CONFIG = {
