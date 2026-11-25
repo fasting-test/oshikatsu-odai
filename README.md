@@ -31,9 +31,14 @@ Code.gs を直したときは「デプロイを管理」→ 鉛筆 →「新バ�
 
 `.claude/launch.json` の「oshikatsu-odai」(ポート8097)。`Code.gs` をそのまま疑似スプレッドシートで動かす。画面の日付は `?today=2026-12-10`、サーバー側の日付は `/__set?today=2026-12-10`(2つをそろえる)。`/__reset` でデータを初期化。
 
-## デモ環境
+## デモ環境(?demo=1)
 
-まだ作っていない。作るときは、デモ用スプレッドシートの Apps Script のURLを `config.js` の `DEMO_URL` に入れ、`TEST_TODAY` を `demoToday` と同じ日付にする。`DEMO_URL` が空のあいだは、`?demo=1` を付けても本番につながる。
+公開URLの末尾に `?demo=1` を付けると、デモ用のスプレッドシート(本番とは別のファイル)につながる。
+
+- `config.js` の `DEMO_URL` に、デモ用 Apps Script のURLを入れる(空のあいだは、`?demo=1` でも本番につながる)
+- デモ用 Apps Script には本番と同じ `Code.gs` を貼り、スクリプトプロパティに `ADMIN_PIN`(デモ用)・`TEST_TODAY`(`config.js` の `demoToday` と同じ。いまは `2026-12-10`)・`DEMO_DEFAULT_GROUP` = `5期` を入れる
+- `DEMO_DEFAULT_GROUP` があると、名簿にない名前の人も5期として扱う(誰でも試せる)。**本番には入れない**
+- 端末に覚えるキーは `odai_demo_` で始まる(本番と別)
 
 ## 配るURL
 

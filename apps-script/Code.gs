@@ -647,6 +647,9 @@ function resolveGroup(displayName, entries) {
   if (!name) return { group: "", candidate: "", candidate_name: "" }
   const exact = entries.find((e) => e.name === name)
   if (exact) return { group: exact.group, candidate: "", candidate_name: "" }
+  // デモ用: スクリプトプロパティ DEMO_DEFAULT_GROUP(例: 5期)があれば、名簿にない人はその期にする(誰でも試せるように)
+  const fallback = demoDefaultGroup()
+  if (fallback) return { group: fallback, candidate: "", candidate_name: "" }
   let best = null
   entries.forEach((e) => {
     const short = e.name.length <= name.length ? e.name : name
@@ -656,6 +659,15 @@ function resolveGroup(displayName, entries) {
     }
   })
   return { group: "", candidate: best ? best.group : "", candidate_name: best ? best.name : "" }
+}
+
+// デモ用の DEMO_DEFAULT_GROUP(本番では入れない)。1回の実行の中では1度だけ読む
+let demoDefaultGroupCache = null
+function demoDefaultGroup() {
+  if (demoDefaultGroupCache === null) {
+    demoDefaultGroupCache = normalizeGroup(PropertiesService.getScriptProperties().getProperty("DEMO_DEFAULT_GROUP") || "")
+  }
+  return demoDefaultGroupCache
 }
 
 // 確定した期だけを返す(確認待ちは "")

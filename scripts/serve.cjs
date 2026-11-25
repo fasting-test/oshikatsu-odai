@@ -34,7 +34,7 @@ function createFile(blob) {
 
 function createGas() {
   const sheets = {}
-  const props = { ADMIN_PIN: args["admin-pin"] || null, PHOTO_URL_BASE: "/__photo?id=" }
+  const props = { ADMIN_PIN: args["admin-pin"] || null, PHOTO_URL_BASE: "/__photo?id=", DEMO_DEFAULT_GROUP: args["demo-group"] || null }
 
   function makeSheet() {
     const data = []
