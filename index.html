@@ -1,0 +1,1984 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>わたし推し活 毎日のお題</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700;900&display=swap" />
+  <link rel="stylesheet" href="style.css?v=23" />
+</head>
+<body>
+  <!-- 飾り: 右上の淡いピンクの円と、枝の線画 -->
+  <div class="deco-layer" aria-hidden="true"><div class="page-deco">
+    <svg viewBox="0 0 60 112" fill="none" stroke="#b5737f" stroke-width="1.2" stroke-linecap="round">
+      <path d="M6 110 C 18 84, 30 52, 54 4" />
+      <ellipse cx="22" cy="90" rx="3.6" ry="8.5" transform="rotate(58 22 90)" />
+      <ellipse cx="11" cy="72" rx="3.6" ry="8.5" transform="rotate(-48 11 72)" />
+      <ellipse cx="36" cy="58" rx="3.6" ry="8.5" transform="rotate(60 36 58)" />
+      <ellipse cx="25" cy="39" rx="3.4" ry="8" transform="rotate(-44 25 39)" />
+      <ellipse cx="50" cy="26" rx="3.2" ry="7.5" transform="rotate(62 50 26)" />
+      <ellipse cx="55" cy="6" rx="2.8" ry="6.5" transform="rotate(28 55 6)" />
+    </svg>
+  </div></div>
+  <main id="main-el">
+    <!-- デモ環境のときだけ出す(?demo=1) -->
+    <p class="demo-banner" id="demo-banner" hidden>デモ環境です。本番とは別のデータなので、自由に試せます(日付は12/10として動きます)。</p>
+
+    <div class="tab-bar">
+      <button type="button" id="tab-btn-student" class="active">わたしの記録</button>
+      <button type="button" id="tab-btn-feed">みんなの投稿</button>
+      <button type="button" id="tab-btn-admin">管理者</button>
+    </div>
+
+    <!-- ==================== わたしの記録タブ ==================== -->
+    <div id="tab-panel-student" class="tab-panel">
+      <div id="student-loading" class="loading">読み込み中...</div>
+
+      <!-- オープン前(11/1より前)の画面 -->
+      <div id="student-soon" hidden>
+        <div class="lead hero">
+          <p class="eyebrow">DECEMBER 2026 – JANUARY 2027</p>
+          <h1 id="soon-title"></h1>
+          <p class="catch">毎日のお題で、自分の気持ちに気づく</p>
+          <p class="sub">感情・思考・価値観を知って、自分の未来を描く5週間</p>
+        </div>
+        <div class="soon-count">
+          <p class="soon-count-label">オープンまで</p>
+          <p class="soon-count-days" id="soon-days"></p>
+        </div>
+      </div>
+
+      <!-- 登録フォーム -->
+      <div id="student-register" hidden>
+        <div class="lead hero">
+          <p class="eyebrow" id="hero-eyebrow">DECEMBER 2026 – JANUARY 2027</p>
+          <h1 id="hero-title">わたし推し活</h1>
+          <p class="catch" id="hero-catch">「好き」を見つけて、心のエネルギーチャージ</p>
+          <p class="sub" id="hero-sub">小さな「好き」から、自分の気持ちに気づく1か月</p>
+        </div>
+
+        <form id="register-form">
+          <div class="name-notice">
+            <p class="name-notice-main">📌 わたし推し活のお名前は、SkipFマイページの「呼び名」を入れてください</p>
+            <p class="name-notice-sub">呼び名は、マイページを開いたときに上に表示されている名前です。</p>
+            <p class="name-notice-sub">スマホとパソコンなど別の端末で使うときも、同じ名前を入れれば続きから記録できます。</p>
+          </div>
+
+          <div class="field">
+            <label for="display_name">お名前(マイページの呼び名)</label>
+            <input id="display_name" name="display_name" type="text" required maxlength="40" placeholder="例: マイページの呼び名そのまま" />
+          </div>
+
+          <!-- 運営の名前のときだけ出る -->
+          <div class="field" id="staff-pin-field" hidden>
+            <label for="staff-pin">管理者の合言葉(運営の方だけ)</label>
+            <input id="staff-pin" type="password" autocomplete="off" placeholder="合言葉" />
+          </div>
+
+          <button type="submit" class="btn-primary" id="submit-btn">はじめる / 続きから</button>
+          <p class="error" id="register-error" hidden></p>
+        </form>
+      </div>
+
+      <!-- 記録の画面 -->
+      <div id="student-card" hidden>
+        <div class="character-quote">
+          <div class="bubble">
+            <p class="label">今日のひとこと</p>
+            <p class="quote" id="quote-title"></p>
+          </div>
+        </div>
+
+        <!-- 12/3から: ホーム(今週のテーマとメニュー) -->
+        <section class="odai-home" id="odai-home" hidden>
+          <p class="odai-week" id="odai-week"></p>
+          <p class="odai-week-range" id="odai-week-range"></p>
+          <p class="odai-pill">今週のテーマ</p>
+          <h2 class="odai-theme" id="odai-theme"></h2>
+          <div class="odai-tiles">
+            <button type="button" class="odai-tile primary" data-jump="write-panel"><span class="odai-tile-icon" aria-hidden="true">✏️</span>今日のお題</button>
+            <button type="button" class="odai-tile" data-jump="odai-calendar"><span class="odai-tile-icon" aria-hidden="true">📅</span>取り組み<br />カレンダー</button>
+            <button type="button" class="odai-tile" data-jump="odai-themes"><span class="odai-tile-icon" aria-hidden="true">📖</span>テーマ一覧</button>
+            <button type="button" class="odai-tile" data-jump="odai-howto"><span class="odai-tile-icon" aria-hidden="true">💡</span>使い方</button>
+          </div>
+        </section>
+
+        <div class="diamond-divider"><span class="diamond"></span></div>
+
+        <!-- 記録する -->
+        <section class="write-panel" id="write-panel">
+          <p class="write-eyebrow" id="write-eyebrow">わたし推し活｜記録</p>
+          <h2 class="write-title" id="write-title">今日の小さな「好き」</h2>
+          <!-- 12/3から: 選んだ日のお題・ヒント・記入例 -->
+          <div class="odai-prompt" id="odai-prompt" hidden>
+            <p class="odai-date" id="odai-date"></p>
+            <p class="odai-pill" id="odai-prompt-pill">今日のお題</p>
+            <p class="odai-prompt-text" id="odai-prompt-text"></p>
+            <div class="odai-hints">
+              <p class="odai-hints-title">書くときのヒント</p>
+              <ul id="odai-hints"></ul>
+            </div>
+            <button type="button" class="odai-example-btn" id="odai-example-btn" aria-expanded="false" aria-controls="odai-example">記入例を見る</button>
+            <p class="odai-example" id="odai-example" hidden></p>
+          </div>
+          <div id="write-form-wrap">
+            <label class="field-label" for="post-text" id="post-label">今日やってみて、感じたこと</label>
+            <textarea id="post-text" rows="2" maxlength="500" placeholder="例: お気に入りの紅茶を飲んだ、あたたかくてホッとした気持ちになった"></textarea>
+            <p class="char-count" id="char-count">0 / 300</p>
+
+            <!-- 五感と気持ち(11/12以降に表示。どちらも任意) -->
+            <div id="senses-block" hidden>
+              <label class="check-row" for="senses-toggle" id="senses-toggle-row">
+                <input type="checkbox" id="senses-toggle" />
+                <span>五感や気持ちも記録してみる</span>
+              </label>
+              <div id="senses-fields" hidden>
+                <p class="field-label" id="senses-title">特に印象に残った五感(いくつでも)</p>
+                <p class="senses-sub" id="senses-sub" hidden>今日の出来事や気持ちに関係する感覚を、タップしてみよう(いくつでも)</p>
+                <div class="sense-list" id="sense-list" role="group" aria-label="印象に残った五感"></div>
+                <label class="field-label" for="feeling-text" id="feeling-label">そのとき、どう感じた?</label>
+                <textarea id="feeling-text" rows="2" maxlength="300" placeholder="例: 香りを感じたら、ほっとした"></textarea>
+              </div>
+            </div>
+
+            <div class="photo-row">
+              <label class="photo-pick" for="record-photo">📷 写真を添える</label>
+              <input id="record-photo" type="file" accept="image/*" hidden />
+              <button type="button" class="btn-link inline" id="record-photo-remove" hidden>写真を外す</button>
+            </div>
+            <img id="record-preview" class="photo-preview" alt="添付する写真のプレビュー" hidden />
+
+            <div class="date-row">
+              <label for="record-date">記録する日</label>
+              <select id="record-date"></select>
+            </div>
+
+            <button type="button" class="btn-primary" id="post-btn">記録する</button>
+            <button type="button" class="btn-link" id="cancel-edit-btn" hidden>書き直しをやめる</button>
+            <p class="write-note write-note-main">入力はここだけでOK。記録すると、下の「わたしの記録」と、上の「みんなの投稿」タブの両方に表示されます。</p>
+            <p class="write-note">※ お名前つきで、同じ期のメンバーと運営に表示され、リアクションやコメントがもらえます。1日に何件でも記録できます。</p>
+            <p class="error" id="post-error" hidden></p>
+          </div>
+          <p class="write-closed" id="write-closed" hidden></p>
+        </section>
+
+        <!-- 12/3から: 取り組みカレンダー(アプリの記録と、手書きノートのスタンプ) -->
+        <section class="odai-section" id="odai-calendar" hidden>
+          <div class="diamond-divider"><span class="diamond"></span></div>
+          <h2 class="feed-title">取り組みカレンダー</h2>
+          <div class="cal-nav">
+            <button type="button" class="cal-nav-btn" id="cal-prev" aria-label="前の月">‹</button>
+            <p class="cal-month" id="cal-month"></p>
+            <button type="button" class="cal-nav-btn" id="cal-next" aria-label="次の月">›</button>
+          </div>
+          <div class="cal-grid" id="cal-grid"></div>
+          <p class="cal-legend"><span>🌸 アプリで記録した日</span><span>📖 手書きノートを書いた日</span></p>
+          <div class="note-check">
+            <p class="note-check-title">📖 手書きノートのチェック</p>
+            <p class="note-check-text">紙のノートに書いた日は、下のボタンを押して記録しよう。(アプリに書いた日は、自動で🌸がつきます)</p>
+            <button type="button" class="note-btn" id="note-today-btn"></button>
+            <p class="cal-hint" id="cal-hint">書き忘れた日の分は、上のカレンダーの日付をタップすると記録できます。まちがえて押したときは、もう一度押すと消せます。</p>
+          </div>
+          <p class="error" id="note-error" hidden></p>
+          <div class="week-progress" id="week-progress"></div>
+        </section>
+
+        <div class="diamond-divider"><span class="diamond"></span></div>
+
+        <!-- わたしの記録(振り返り) -->
+        <section class="my-records" id="my-records">
+          <h2 class="feed-title">わたしの記録</h2>
+          <p class="feed-sub" id="my-records-sub"></p>
+          <p class="sense-summary" id="sense-summary" hidden></p>
+          <div id="my-records-list"></div>
+          <p class="feed-empty" id="my-records-empty" hidden>まだ記録がありません。今日の小さな「好き」から始めよう。</p>
+        </section>
+
+        <!-- 12/3から: テーマ一覧 -->
+        <section class="odai-section" id="odai-themes" hidden>
+          <div class="diamond-divider"><span class="diamond"></span></div>
+          <h2 class="feed-title">テーマ一覧</h2>
+          <p class="feed-sub">週ごとのテーマと、今日までのお題です。タップすると開きます。</p>
+          <div id="odai-theme-list"></div>
+        </section>
+
+        <!-- 12/3から: 使い方 -->
+        <section class="odai-section" id="odai-howto" hidden>
+          <div class="diamond-divider"><span class="diamond"></span></div>
+          <h2 class="feed-title">使い方</h2>
+          <ol class="howto-steps">
+            <li><b>ホーム</b>で、今週のテーマを確認</li>
+            <li><b>今日のお題</b>と、書くときのヒントを読む(迷ったら「記入例を見る」)</li>
+            <li>お題への答えを入力し、五感タップ(任意)を選んで<b>「記録を保存する」</b></li>
+            <li>手書きノートを書いた日は、<b>取り組みカレンダー</b>でスタンプを押す</li>
+          </ol>
+          <h3 class="howto-sub">アプリとノートの役割</h3>
+          <div class="role-card">
+            <p class="role-name">📱 アプリ<span>(1日1〜3分程度)</span></p>
+            <p class="role-text">毎日のお題に入力し、自分に意識を向ける習慣をつくる</p>
+          </div>
+          <div class="role-card">
+            <p class="role-name">📖 手書きノート<span>(1日5〜10分程度)</span></p>
+            <p class="role-text">自分の感情や思考を書き出し、問いかけながら、より深く自己理解を進める</p>
+          </div>
+          <p class="howto-note">※ 同じ内容を書く必要はありません。それぞれの役割で、自分のペースで取り組めます。</p>
+          <p class="howto-note">アプリに書いた答えは、同じ期のメンバーと運営の「みんなの投稿」にも表示され、いいねやコメントがもらえます。</p>
+        </section>
+
+        <button type="button" class="btn-link" id="back-to-login-btn">ログイン画面に戻る</button>
+      </div>
+    </div>
+
+    <!-- ==================== みんなの投稿タブ(同じ期のメンバーと運営) ==================== -->
+    <div id="tab-panel-feed" class="tab-panel" hidden>
+      <!-- 使えない状態(オープン前・未ログイン)のお知らせ -->
+      <div id="feed-tab-gate" hidden>
+        <p class="write-closed" id="feed-tab-gate-text"></p>
+        <button type="button" class="btn-primary gate-btn" id="feed-tab-gate-btn" hidden>わたしの記録へ</button>
+      </div>
+
+      <section class="feed" id="feed" hidden>
+        <h2 class="feed-title">みんなの投稿</h2>
+        <p class="feed-sub" id="feed-sub"></p>
+        <div class="feed-filter" id="feed-filter" role="group" aria-label="期で絞り込む" hidden></div>
+        <p class="write-closed" id="feed-gate" hidden></p>
+        <div id="feed-list"></div>
+        <p class="loading small" id="feed-loading">読み込み中...</p>
+        <p class="feed-empty" id="feed-empty" hidden>まだ記録がありません。最初の1人になろう!</p>
+        <p class="error" id="feed-error" hidden></p>
+        <button type="button" class="btn-link" id="feed-more-btn" hidden>もっと見る</button>
+        <button type="button" class="btn-link" id="feed-reload-btn">最新の記録に更新する</button>
+      </section>
+    </div>
+
+    <!-- ==================== 管理者タブ ==================== -->
+    <div id="tab-panel-admin" class="tab-panel" hidden>
+      <div id="admin-pin-gate">
+        <div class="lead">
+          <p class="eyebrow">管理者専用</p>
+          <h1 style="font-size: 18px;">合言葉を入力してください</h1>
+        </div>
+        <form id="pin-form" class="pin-form">
+          <div class="field">
+            <input id="pin-input" type="text" inputmode="text" required placeholder="合言葉" autocomplete="off" />
+          </div>
+          <button type="submit" class="btn-primary" id="pin-btn">入る</button>
+          <p class="error" id="pin-error" hidden></p>
+        </form>
+      </div>
+
+      <div id="admin-content" hidden>
+        <div id="admin-loading" class="loading">読み込み中...</div>
+        <div id="admin-list" hidden>
+          <p class="admin-summary" id="admin-summary-text"></p>
+          <div class="admin-table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>お名前</th>
+                  <th>期</th>
+                  <th>経過</th>
+                  <th>記録</th>
+                  <th>最終更新</th>
+                </tr>
+              </thead>
+              <tbody id="admin-table-body"></tbody>
+            </table>
+          </div>
+
+          <h2 class="admin-section-title">記録の管理</h2>
+          <p class="admin-summary">不適切な記録やコメントは「非表示にする」を押すと、メンバーの画面から消えます(記録は、本人の画面にはそのまま残ります)。「表示に戻す」で元に戻せます。</p>
+          <div id="admin-posts"></div>
+
+          <h2 class="admin-section-title">期の確認待ち</h2>
+          <p class="admin-summary">名簿と完全に一致しなかった受講生です。候補を見て、期のボタンを押すと確定します(その受講生の入力した名前で、名簿に登録されます)。</p>
+          <div id="admin-pending"></div>
+
+          <h2 class="admin-section-title">期(グループ)の設定</h2>
+          <p class="admin-summary">記録は、同じ期のメンバーだけで見せ合います。受講生の「呼び名」と期を登録してください(呼び名は、受講生が入力する名前と、まったく同じにします)。</p>
+          <p class="admin-summary">運営として参加する人は、「1人登録」で期を「運営」にしてください。すべての期の記録を見て、いいね・コメントでき、運営の記録はすべての期に表示されます。運営の名前でログインするときは、この管理者の合言葉が必要です。</p>
+          <div class="admin-roster">
+            <label for="roster-text">まとめて登録(1行に1人、「呼び名,期」の形。または「3期」「0〜2期」の行の下に、呼び名を1行ずつ。マイページの一覧をコピーして貼り付けできます)</label>
+            <textarea id="roster-text" rows="4" placeholder="例:&#10;はなちゃん,3期&#10;さくら,0〜2期"></textarea>
+            <button type="button" class="btn-primary admin-small-btn" id="roster-import-btn">まとめて登録する</button>
+            <div class="roster-one">
+              <input id="roster-name" type="text" maxlength="40" placeholder="呼び名" />
+              <select id="roster-group" aria-label="期"></select>
+              <button type="button" class="btn-primary admin-small-btn" id="roster-set-btn">1人登録</button>
+            </div>
+            <p class="admin-summary" id="roster-summary"></p>
+            <p class="error" id="roster-error" hidden></p>
+            <p class="admin-ok" id="roster-ok" hidden></p>
+          </div>
+
+          <button type="button" class="btn-primary admin-refresh" id="admin-refresh-btn">再読み込み</button>
+        </div>
+        <p class="error" id="admin-error" hidden></p>
+      </div>
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+  <script src="config.js?v=2"></script>
+  <script src="odai.js?v=1"></script>
+  <script src="app.js?v=13"></script>
+  <script>
+    const REGISTER_DRAFT_KEY = STORAGE_PREFIX + "register_draft"
+    const ADMIN_PIN_KEY = STORAGE_PREFIX + "admin_pin"
+    const FEED_PAGE_SIZE = 30
+
+    const mainEl = document.getElementById("main-el")
+    document.getElementById("demo-banner").hidden = !IS_DEMO
+    const tabs = {
+      student: { btn: document.getElementById("tab-btn-student"), panel: document.getElementById("tab-panel-student") },
+      feed: { btn: document.getElementById("tab-btn-feed"), panel: document.getElementById("tab-panel-feed") },
+      admin: { btn: document.getElementById("tab-btn-admin"), panel: document.getElementById("tab-panel-admin") },
+    }
+
+    // ---------------- タブ切り替え ----------------
+
+    function showTab(tab) {
+      Object.entries(tabs).forEach(([name, t]) => {
+        t.panel.hidden = name !== tab
+        t.btn.classList.toggle("active", name === tab)
+      })
+      mainEl.classList.toggle("wide", tab === "admin")
+      if (tab === "admin") initAdminTab()
+      if (tab === "feed") initFeedTab()
+      window.scrollTo(0, 0)
+    }
+
+    Object.entries(tabs).forEach(([name, t]) => t.btn.addEventListener("click", () => showTab(name)))
+
+    // ---------------- わたしの記録タブ ----------------
+
+    const studentLoadingEl = document.getElementById("student-loading")
+    const studentRegisterEl = document.getElementById("student-register")
+    const studentCardEl = document.getElementById("student-card")
+    const studentSoonEl = document.getElementById("student-soon")
+
+    const nameInput = document.getElementById("display_name")
+    const registerForm = document.getElementById("register-form")
+    const submitBtn = document.getElementById("submit-btn")
+    const registerErrorEl = document.getElementById("register-error")
+
+    const quoteTitleEl = document.getElementById("quote-title")
+    const writeTitleEl = document.getElementById("write-title")
+    const writeFormWrapEl = document.getElementById("write-form-wrap")
+    const writeClosedEl = document.getElementById("write-closed")
+    const postTextEl = document.getElementById("post-text")
+    const charCountEl = document.getElementById("char-count")
+    const postLabelEl = document.getElementById("post-label")
+    const sensesBlockEl = document.getElementById("senses-block")
+    const sensesToggleEl = document.getElementById("senses-toggle")
+    const sensesFieldsEl = document.getElementById("senses-fields")
+    const senseListEl = document.getElementById("sense-list")
+    const feelingTextEl = document.getElementById("feeling-text")
+    const recordDateEl = document.getElementById("record-date")
+    const recordPhotoInput = document.getElementById("record-photo")
+    const recordPhotoRemoveBtn = document.getElementById("record-photo-remove")
+    const recordPreviewEl = document.getElementById("record-preview")
+    const postBtn = document.getElementById("post-btn")
+    const cancelEditBtn = document.getElementById("cancel-edit-btn")
+    const postErrorEl = document.getElementById("post-error")
+    const myRecordsSubEl = document.getElementById("my-records-sub")
+    const senseSummaryEl = document.getElementById("sense-summary")
+    const myRecordsListEl = document.getElementById("my-records-list")
+    const myRecordsEmptyEl = document.getElementById("my-records-empty")
+    const writeEyebrowEl = document.getElementById("write-eyebrow")
+    const sensesToggleRowEl = document.getElementById("senses-toggle-row")
+    const sensesTitleEl = document.getElementById("senses-title")
+    const sensesSubEl = document.getElementById("senses-sub")
+    const feelingLabelEl = document.getElementById("feeling-label")
+    const odaiHomeEl = document.getElementById("odai-home")
+    const odaiPromptEl = document.getElementById("odai-prompt")
+    const odaiExampleBtn = document.getElementById("odai-example-btn")
+    const odaiExampleEl = document.getElementById("odai-example")
+    const odaiCalendarEl = document.getElementById("odai-calendar")
+    const odaiThemesEl = document.getElementById("odai-themes")
+    const odaiHowtoEl = document.getElementById("odai-howto")
+    const calGridEl = document.getElementById("cal-grid")
+    const calMonthEl = document.getElementById("cal-month")
+    const calPrevBtn = document.getElementById("cal-prev")
+    const calNextBtn = document.getElementById("cal-next")
+    const noteTodayBtn = document.getElementById("note-today-btn")
+    const noteErrorEl = document.getElementById("note-error")
+    const weekProgressEl = document.getElementById("week-progress")
+
+    let student = null
+    let myRecords = []
+    let todayOffset = 0
+    let selectedSenses = new Set()
+    let editingId = null // 書き直し中の記録ID
+    let isPosting = false
+    let recordPhoto = null // 新しく選んだ写真(compressPhoto の結果)
+    let editingPhotoUrl = "" // 書き直し中の記録に、もともと付いている写真
+    let removeEditingPhoto = false // 書き直し中に「写真を外す」を押した
+
+    function lastDayOf(start) {
+      return addDays(start, PROGRAM_LENGTH - 1)
+    }
+
+    // 五感と気持ちの欄を出すかどうか(11/12以降)
+    function sensesAvailable() {
+      return todayStr() >= SENSES_START_DATE
+    }
+
+    // 12/3からは、ログイン画面の見出しをお題の期間のものにする(文言は仮。正式に決まったら差し替える)
+    if (isOdaiMode()) {
+      document.getElementById("hero-eyebrow").textContent = "DECEMBER 2026 – JANUARY 2027"
+      document.getElementById("hero-title").textContent = "わたし推し活"
+      document.getElementById("hero-catch").textContent = "毎日のお題で、自分の気持ちに気づく"
+      document.getElementById("hero-sub").textContent = "感情・思考・価値観を知って、自分の未来を描く5週間"
+    }
+
+    // オープン前(開始日より前)は、登録も記録もできないので、お知らせの画面だけを出す
+    function showOpeningSoon() {
+      const daysLeft = -dayOffsetFromStart(PROGRAM_START_DATE)
+      const title = document.getElementById("soon-title")
+      title.appendChild(document.createTextNode(`${formatMdWeekday(PROGRAM_START_DATE)}に、`))
+      title.appendChild(document.createElement("br"))
+      title.appendChild(document.createTextNode("オープンします。"))
+      document.getElementById("soon-days").textContent = daysLeft === 1 ? "あと1日(明日です)" : `あと${daysLeft}日`
+      studentLoadingEl.hidden = true
+      studentRegisterEl.hidden = true
+      studentCardEl.hidden = true
+      studentSoonEl.hidden = false
+    }
+
+    async function initStudentTab() {
+      if (dayOffsetFromStart(PROGRAM_START_DATE) < 0) {
+        showOpeningSoon()
+        return
+      }
+
+      const studentId = getStudentIdFromLocalStorage()
+      if (studentId) {
+        try {
+          student = await getStudentById(studentId)
+        } catch {
+          student = null
+        }
+      }
+
+      if (student) {
+        setSharedDisplayName(student.display_name)
+        applyStudent(student)
+        todayOffset = dayOffsetFromStart(student.start_date)
+
+        renderSenseList()
+        renderDateOptions()
+        restoreRecordDraft()
+        renderAll()
+        studentLoadingEl.hidden = true
+        studentRegisterEl.hidden = true
+        studentCardEl.hidden = false
+        return
+      }
+
+      // 未登録、またはIDはあるが見つからない場合は登録フォームへ
+      clearStudentIdFromLocalStorage()
+      try {
+        const raw = localStorage.getItem(REGISTER_DRAFT_KEY)
+        if (raw) nameInput.value = raw
+      } catch {
+        // 無視
+      }
+      // チャレンジシート側でログインした名前があれば、名前欄に最初から入れておく
+      if (!nameInput.value) nameInput.value = getSharedDisplayName() || ""
+
+      studentLoadingEl.hidden = true
+      studentCardEl.hidden = true
+      studentRegisterEl.hidden = false
+    }
+
+    function applyStudent(s) {
+      student = s
+      myRecords = s.my_records || []
+    }
+
+    nameInput.addEventListener("input", () => {
+      try {
+        localStorage.setItem(REGISTER_DRAFT_KEY, nameInput.value)
+      } catch {
+        // 無視
+      }
+    })
+
+    const staffPinFieldEl = document.getElementById("staff-pin-field")
+    const staffPinInput = document.getElementById("staff-pin")
+
+    registerForm.addEventListener("submit", async (e) => {
+      e.preventDefault()
+      registerErrorEl.hidden = true
+      submitBtn.disabled = true
+      try {
+        const newStudent = await registerOrResumeStudent(nameInput.value, staffPinFieldEl.hidden ? "" : staffPinInput.value)
+        staffPinInput.value = ""
+        staffPinFieldEl.hidden = true
+        setStudentIdToLocalStorage(newStudent.id)
+        try {
+          localStorage.removeItem(REGISTER_DRAFT_KEY)
+        } catch {
+          // 無視
+        }
+        student = newStudent
+        await initStudentTab()
+      } catch (err) {
+        // 運営の名前なら、合言葉の欄を出す
+        if (err && err.message === apiErrorMessage("staff_pin_required")) {
+          staffPinFieldEl.hidden = false
+          staffPinInput.focus()
+        }
+        registerErrorEl.textContent = err && err.message ? err.message : "エラーが発生しました。もう一度お試しください。"
+        registerErrorEl.hidden = false
+      } finally {
+        submitBtn.disabled = false
+      }
+    })
+
+    // 別の名前でやり直したいとき用。この端末の「自分は誰か」の記憶だけを消す
+    // (スプレッドシート上の記録は消えない。同じ名前で入れば続きから再開できる)。
+    document.getElementById("back-to-login-btn").addEventListener("click", () => {
+      if (!confirm("ログイン画面に戻ります。\n(これまでの記録は消えません)")) return
+      clearStudentIdFromLocalStorage()
+      clearSharedDisplayName()
+      student = null
+      resetFeed()
+      nameInput.value = ""
+      registerErrorEl.hidden = true
+      studentCardEl.hidden = true
+      studentRegisterEl.hidden = false
+      window.scrollTo(0, 0)
+    })
+
+    // ---- 全体の描画 ----
+
+    function renderAll() {
+      renderQuote()
+      renderWritePanel()
+      renderMyRecords()
+      renderOdai()
+    }
+
+    function todaysRecordCount() {
+      const today = todayStr()
+      return myRecords.filter((r) => r.date === today).length
+    }
+
+    function renderQuote() {
+      const name = withChan(student.display_name)
+
+      if (odaiLocked()) {
+        quoteTitleEl.textContent = `${name}、ようこそ。`
+        return
+      }
+
+      if (isOdaiMode()) {
+        if (!odaiOf(todayStr())) {
+          quoteTitleEl.textContent = `${name}、お題の期間、おつかれさま。これまでの記録を見返してみよう。`
+        } else if (todaysRecordCount() > 0) {
+          quoteTitleEl.textContent = `${name}、今日のお題に答えたね。手書きノートも、自分のペースでどうぞ。`
+        } else {
+          quoteTitleEl.textContent = `${name}、今日のお題に、思いつくまま答えてみよう。短い文章でも大丈夫だよ。`
+        }
+        return
+      }
+
+      if (todayOffset < 0) {
+        quoteTitleEl.textContent = `${name}、${formatMdWeekday(student.start_date)}からスタート。楽しみに待っていてね!`
+      } else if (todaysRecordCount() > 0) {
+        quoteTitleEl.textContent = `${name}、今日も「好き」を見つけたね。ほかにもあったら、いくつでも書いていいよ。`
+      } else {
+        quoteTitleEl.textContent = `${name}、今日は、どんな小さな「好き」があった?`
+      }
+    }
+
+    // ---- 記録する ----
+
+    function renderSenseList() {
+      senseListEl.innerHTML = ""
+      SENSES.forEach((sense) => {
+        const btn = document.createElement("button")
+        btn.type = "button"
+        btn.className = "sense-btn"
+        btn.setAttribute("aria-pressed", String(selectedSenses.has(sense.type)))
+        btn.classList.toggle("active", selectedSenses.has(sense.type))
+        if (isOdaiMode()) {
+          const icon = document.createElement("span")
+          icon.className = "sense-emoji"
+          icon.textContent = sense.emoji
+          btn.appendChild(icon)
+          btn.appendChild(document.createTextNode(sense.label))
+        } else {
+          btn.textContent = `${sense.emoji} ${sense.label} — ${sense.hint}`
+        }
+        btn.addEventListener("click", () => {
+          if (selectedSenses.has(sense.type)) selectedSenses.delete(sense.type)
+          else selectedSenses.add(sense.type)
+          renderSenseList()
+          saveDraftFromForm()
+        })
+        senseListEl.appendChild(btn)
+      })
+      senseListEl.classList.toggle("compact", isOdaiMode())
+    }
+
+    // 記録する日の選択肢(今日から開始日まで。期間が終わっていれば最終日から)
+    // includeDate: 書き直す記録の日付(選択肢になければ足す。11月の記録を12月に書き直すときなど)
+    function renderDateOptions(includeDate) {
+      recordDateEl.innerHTML = ""
+      if (isOdaiMode()) {
+        const latest = todayStr() > ODAI_END_DATE ? ODAI_END_DATE : todayStr()
+        for (let d = latest; d >= ODAI_START_DATE; d = addDays(d, -1)) {
+          const opt = document.createElement("option")
+          opt.value = d
+          opt.textContent = `${formatMdWeekday(d)}${d === todayStr() ? "(今日)" : ""}`
+          recordDateEl.appendChild(opt)
+        }
+        if (includeDate && includeDate < ODAI_START_DATE) {
+          const opt = document.createElement("option")
+          opt.value = includeDate
+          opt.textContent = formatMdWeekday(includeDate)
+          recordDateEl.appendChild(opt)
+        }
+        recordDateEl.value = latest
+        return
+      }
+      if (todayOffset < 0) return
+      const latest = todayOffset >= PROGRAM_LENGTH ? lastDayOf(student.start_date) : todayStr()
+      const latestOffset = dayOffsetFromStart(student.start_date, latest)
+      for (let i = latestOffset; i >= 0; i--) {
+        const date = addDays(student.start_date, i)
+        const opt = document.createElement("option")
+        opt.value = date
+        opt.textContent = `${formatMdWeekday(date)}${date === todayStr() ? "(今日)" : ""}`
+        recordDateEl.appendChild(opt)
+      }
+      recordDateEl.value = latest
+    }
+
+    function renderWritePanel() {
+      postErrorEl.hidden = true
+      if (todayOffset < 0) {
+        writeFormWrapEl.hidden = true
+        writeClosedEl.hidden = false
+        writeClosedEl.textContent = `${formatMdWeekday(student.start_date)}から、毎日の小さな「好き」を記録できます。`
+        return
+      }
+      if (odaiLocked()) {
+        writeEyebrowEl.textContent = "わたし推し活"
+        writeTitleEl.hidden = false
+        writeTitleEl.textContent = "毎日のお題"
+        odaiPromptEl.hidden = true
+        writeFormWrapEl.hidden = true
+        writeClosedEl.hidden = false
+        writeClosedEl.textContent = student.group
+          ? "このアプリは、5期のみなさん向けです。"
+          : "このアプリは、5期のみなさん向けです。5期の方は、運営にお名前をお知らせください(名簿で確認できると使えるようになります)。"
+        return
+      }
+      writeFormWrapEl.hidden = false
+      writeClosedEl.hidden = true
+
+      if (isOdaiMode()) {
+        renderOdaiWritePanel()
+        return
+      }
+      sensesBlockEl.hidden = !sensesAvailable()
+      // 11/11までは「やってみて、感じたこと」を1つの欄に。11/12からは「やってみたこと」と「どう感じた?」に分ける
+      postLabelEl.textContent = sensesAvailable() ? "今日やってみたこと" : "今日やってみて、感じたこと"
+      postTextEl.placeholder = sensesAvailable() ? "例: お気に入りの紅茶を飲んだ" : "例: お気に入りの紅茶を飲んだ、あたたかくてホッとした気持ちになった"
+      sensesFieldsEl.hidden = !(sensesAvailable() && sensesToggleEl.checked)
+      writeTitleEl.textContent = editingId ? "記録を書き直す" : "今日の小さな「好き」"
+      postBtn.textContent = editingId ? "書き直して保存する" : "記録する"
+      cancelEditBtn.hidden = !editingId
+      updateCharCount()
+    }
+
+    // 12/3から: お題に答える形の記録欄
+    function renderOdaiWritePanel() {
+      writeEyebrowEl.textContent = "わたし推し活｜今日のお題"
+      writeTitleEl.hidden = !editingId
+      writeTitleEl.textContent = "記録を書き直す"
+      renderOdaiPrompt()
+      postLabelEl.textContent = "今日のお題への入力"
+      postTextEl.placeholder = "ここに、今日の気持ちや考えを自由に書いてみましょう。(短い文章でも大丈夫です)"
+      postTextEl.rows = 5
+      // 五感タップ(任意)。チェックの欄はなくし、いつも出す
+      sensesBlockEl.hidden = false
+      sensesToggleRowEl.hidden = true
+      sensesFieldsEl.hidden = false
+      sensesTitleEl.textContent = "五感タップ(任意)"
+      sensesSubEl.hidden = false
+      // 「どう感じた?」の欄は、11月の記録を書き直すとき(中身があるとき)だけ出す
+      const showFeeling = !!feelingTextEl.value
+      feelingLabelEl.hidden = !showFeeling
+      feelingTextEl.hidden = !showFeeling
+      postBtn.textContent = editingId ? "書き直して保存する" : "記録を保存する"
+      cancelEditBtn.hidden = !editingId
+      updateCharCount()
+    }
+
+    // 選んだ日(記録する日)のお題・ヒント・記入例
+    function renderOdaiPrompt() {
+      const date = recordDateEl.value || todayStr()
+      const odai = odaiOf(date)
+      odaiPromptEl.hidden = !odai
+      if (!odai) return
+      const [, m, d] = date.split("-").map(Number)
+      document.getElementById("odai-date").textContent = `${m}月${d}日(${formatMdWeekday(date).slice(-2, -1)})・WEEK ${odai.week}`
+      document.getElementById("odai-prompt-pill").textContent = date === todayStr() ? "今日のお題" : "この日のお題"
+      document.getElementById("odai-prompt-text").textContent = odai.prompt
+      const hintsEl = document.getElementById("odai-hints")
+      hintsEl.innerHTML = ""
+      odai.hints.forEach((h) => {
+        const li = document.createElement("li")
+        li.textContent = h
+        hintsEl.appendChild(li)
+      })
+      odaiExampleEl.textContent = `例: ${odai.example}`
+      setExampleOpen(odaiExampleBtn.getAttribute("aria-expanded") === "true")
+    }
+
+    function setExampleOpen(open) {
+      odaiExampleBtn.setAttribute("aria-expanded", String(open))
+      odaiExampleBtn.textContent = open ? "記入例を閉じる" : "記入例を見る"
+      odaiExampleEl.hidden = !open
+    }
+
+    odaiExampleBtn.addEventListener("click", () => setExampleOpen(odaiExampleBtn.getAttribute("aria-expanded") !== "true"))
+
+    function updateCharCount() {
+      charCountEl.textContent = `${postTextEl.value.length} / ${MAX_TEXT_LENGTH}`
+    }
+
+    function saveDraftFromForm() {
+      // 書き直し中は、下書きとして保存しない(元の記録があるため)
+      if (editingId) return
+      saveRecordDraft({
+        text: postTextEl.value,
+        senses: [...selectedSenses],
+        feeling: feelingTextEl.value,
+        sensesOn: sensesToggleEl.checked,
+        date: recordDateEl.value,
+      })
+    }
+
+    function restoreRecordDraft() {
+      const draft = loadRecordDraft()
+      if (!draft) return
+      postTextEl.value = draft.text || ""
+      feelingTextEl.value = draft.feeling || ""
+      selectedSenses = new Set((draft.senses || []).filter((t) => senseOf(t)))
+      sensesToggleEl.checked = !!draft.sensesOn
+      if (draft.date && [...recordDateEl.options].some((o) => o.value === draft.date)) recordDateEl.value = draft.date
+      renderSenseList()
+    }
+
+    function clearForm() {
+      postTextEl.value = ""
+      feelingTextEl.value = ""
+      selectedSenses = new Set()
+      sensesToggleEl.checked = false
+      editingId = null
+      clearRecordPhoto()
+      renderSenseList()
+      renderDateOptions()
+      saveRecordDraft(null)
+    }
+
+    postTextEl.addEventListener("input", () => {
+      updateCharCount()
+      saveDraftFromForm()
+    })
+    feelingTextEl.addEventListener("input", saveDraftFromForm)
+    recordDateEl.addEventListener("change", () => {
+      saveDraftFromForm()
+      if (isOdaiMode()) {
+        setExampleOpen(false)
+        renderOdaiPrompt()
+      }
+    })
+    sensesToggleEl.addEventListener("change", () => {
+      sensesFieldsEl.hidden = !sensesToggleEl.checked
+      saveDraftFromForm()
+    })
+
+    function showPostError(message) {
+      postErrorEl.textContent = message
+      postErrorEl.hidden = false
+    }
+
+    // ---- 記録に添える写真(任意・1枚) ----
+
+    function renderRecordPhoto() {
+      const url = recordPhoto ? recordPhoto.previewUrl : removeEditingPhoto ? "" : editingPhotoUrl
+      if (url) recordPreviewEl.src = url
+      else recordPreviewEl.removeAttribute("src")
+      recordPreviewEl.hidden = !url
+      recordPhotoRemoveBtn.hidden = !url
+    }
+
+    function clearRecordPhoto() {
+      recordPhoto = null
+      editingPhotoUrl = ""
+      removeEditingPhoto = false
+      recordPhotoInput.value = ""
+      renderRecordPhoto()
+    }
+
+    recordPhotoInput.addEventListener("change", async () => {
+      const file = recordPhotoInput.files && recordPhotoInput.files[0]
+      if (!file) return
+      postErrorEl.hidden = true
+      try {
+        recordPhoto = await compressPhoto(file)
+      } catch (err) {
+        recordPhoto = null
+        recordPhotoInput.value = ""
+        showPostError(err && err.message ? err.message : "写真を読み込めませんでした")
+      }
+      renderRecordPhoto()
+    })
+
+    recordPhotoRemoveBtn.addEventListener("click", () => {
+      recordPhoto = null
+      recordPhotoInput.value = ""
+      if (editingPhotoUrl) removeEditingPhoto = true
+      renderRecordPhoto()
+    })
+
+    postBtn.addEventListener("click", async () => {
+      if (isPosting) return
+      const text = postTextEl.value.trim()
+      if (!text) {
+        showPostError(isOdaiMode() ? "お題への答えを入力してください" : sensesAvailable() ? "今日やってみたことを入力してください" : "今日やってみて、感じたことを入力してください")
+        return
+      }
+      // 五感と気持ちは任意。チェックを外していれば送らない(12/3からは、チェックなしで五感タップだけ)
+      const useSenses = isOdaiMode() || (sensesAvailable() && sensesToggleEl.checked)
+      const senses = useSenses ? [...selectedSenses] : []
+      const feeling = useSenses ? feelingTextEl.value.trim() : ""
+      const wasEditing = !!editingId
+
+      isPosting = true
+      postBtn.disabled = true
+      postErrorEl.hidden = true
+      const btnLabel = postBtn.textContent
+      if (recordPhoto) postBtn.textContent = "写真を送っています..."
+      try {
+        const updated = await saveRecord(student.id, editingId, recordDateEl.value, text, senses, feeling, recordPhoto, removeEditingPhoto)
+        applyStudent(updated)
+        clearForm()
+        if (!wasEditing) fireConfetti()
+        renderAll()
+        refreshFeedIfLoaded()
+      } catch (err) {
+        showPostError(err && err.message ? err.message : "送信できませんでした。もう一度お試しください。")
+      } finally {
+        isPosting = false
+        postBtn.disabled = false
+        if (postBtn.textContent === "写真を送っています...") postBtn.textContent = btnLabel
+      }
+    })
+
+    cancelEditBtn.addEventListener("click", () => {
+      clearForm()
+      restoreRecordDraft()
+      renderWritePanel()
+    })
+
+    // 自分の記録を、書き直し用にフォームへ戻す
+    function startEdit(record) {
+      editingId = record.id
+      clearRecordPhoto()
+      editingPhotoUrl = record.photo_url || ""
+      renderRecordPhoto()
+      postTextEl.value = record.text
+      feelingTextEl.value = record.feeling || ""
+      selectedSenses = new Set(record.senses || [])
+      sensesToggleEl.checked = !!(record.feeling || (record.senses && record.senses.length))
+      renderDateOptions(record.date)
+      if ([...recordDateEl.options].some((o) => o.value === record.date)) recordDateEl.value = record.date
+      renderSenseList()
+      renderWritePanel()
+      document.getElementById("write-panel").scrollIntoView({ behavior: "smooth", block: "start" })
+    }
+
+    // ---- 12/3から: ホーム・取り組みカレンダー・テーマ一覧・使い方 ----
+
+    let calMonth = "" // カレンダーで表示している月("2026-12")
+    let noteBusy = false
+
+    // 今の週を決める基準の日(期間が終わったら最終日)
+    function odaiBaseDate() {
+      const today = todayStr()
+      if (today < ODAI_START_DATE) return ODAI_START_DATE
+      return today > ODAI_END_DATE ? ODAI_END_DATE : today
+    }
+
+    // 記録の上に出す「お題」の1行(お題の期間の記録だけ)
+    function buildOdaiLine(date) {
+      const odai = odaiOf(date)
+      if (!odai) return null
+      const line = document.createElement("p")
+      line.className = "record-odai"
+      line.textContent = `お題: ${odai.prompt}`
+      return line
+    }
+
+    // お題の期間に入ったが、5期(と運営)ではない人。11月の記録の見返しだけにする
+    function odaiLocked() {
+      return isOdaiMode() && !canUseOdai(student && student.group)
+    }
+
+    function renderOdai() {
+      const on = isOdaiMode() && !odaiLocked()
+      ;[odaiHomeEl, odaiCalendarEl, odaiThemesEl, odaiHowtoEl].forEach((el) => (el.hidden = !on))
+      if (!on) return
+      renderOdaiHome()
+      renderCalendar()
+      renderThemeList()
+    }
+
+    function renderOdaiHome() {
+      const week = odaiWeeks().find((w) => w.week === odaiWeekOf(odaiBaseDate()))
+      document.getElementById("odai-week").textContent = `WEEK ${week.week}`
+      document.getElementById("odai-week-range").textContent = `(${formatMdWeekday(week.start)}〜${formatMdWeekday(week.end)})`
+      document.getElementById("odai-theme").textContent = week.theme
+    }
+
+    // タイルを押すと、その場所までスクロールする
+    document.querySelectorAll(".odai-tile").forEach((tile) => {
+      tile.addEventListener("click", () => {
+        const target = document.getElementById(tile.dataset.jump)
+        if (target) target.scrollIntoView({ behavior: "smooth", block: "start" })
+      })
+    })
+
+    function recordDates() {
+      return new Set(myRecords.map((r) => r.date))
+    }
+
+    function noteDates() {
+      return new Set((student && student.note_dates) || [])
+    }
+
+    function renderCalendar() {
+      const months = []
+      for (let d = ODAI_START_DATE; d <= ODAI_END_DATE; d = addDays(d, 1)) {
+        const ym = d.slice(0, 7)
+        if (!months.includes(ym)) months.push(ym)
+      }
+      if (!months.includes(calMonth)) {
+        const baseYm = odaiBaseDate().slice(0, 7)
+        calMonth = months.includes(baseYm) ? baseYm : months[0]
+      }
+      const index = months.indexOf(calMonth)
+      calPrevBtn.disabled = index <= 0
+      calNextBtn.disabled = index >= months.length - 1
+      calPrevBtn.onclick = () => {
+        calMonth = months[index - 1]
+        renderCalendar()
+      }
+      calNextBtn.onclick = () => {
+        calMonth = months[index + 1]
+        renderCalendar()
+      }
+      const [y, m] = calMonth.split("-").map(Number)
+      calMonthEl.textContent = `${y}年${m}月`
+
+      const records = recordDates()
+      const notes = noteDates()
+      const today = todayStr()
+      calGridEl.innerHTML = ""
+      ;["月", "火", "水", "木", "金", "土", "日"].forEach((w, i) => {
+        const head = document.createElement("span")
+        head.className = "cal-head" + (i === 5 ? " sat" : i === 6 ? " sun" : "")
+        head.textContent = w
+        calGridEl.appendChild(head)
+      })
+      const first = `${calMonth}-01`
+      const lead = (new Date(Date.UTC(y, m - 1, 1)).getUTCDay() + 6) % 7 // 月曜はじまり
+      for (let i = 0; i < lead; i++) calGridEl.appendChild(document.createElement("span"))
+      for (let d = first; d.slice(0, 7) === calMonth; d = addDays(d, 1)) {
+        const inRange = d >= ODAI_START_DATE && d <= ODAI_END_DATE
+        const canTap = inRange && d <= today
+        const cell = document.createElement(canTap ? "button" : "span")
+        cell.className = "cal-day"
+        if (!inRange) cell.classList.add("out")
+        if (d === today) cell.classList.add("today")
+        if (records.has(d)) cell.classList.add("has-record")
+        if (notes.has(d)) cell.classList.add("has-note")
+        const num = document.createElement("span")
+        num.className = "cal-num"
+        num.textContent = String(Number(d.slice(8)))
+        cell.appendChild(num)
+        const marks = document.createElement("span")
+        marks.className = "cal-marks"
+        marks.textContent = `${records.has(d) ? "🌸" : ""}${notes.has(d) ? "📖" : ""}`
+        cell.appendChild(marks)
+        if (canTap) {
+          cell.type = "button"
+          const label = `${formatMdWeekday(d)}${records.has(d) ? "・アプリの記録あり" : ""}${notes.has(d) ? "・ノートのスタンプあり" : ""}`
+          cell.setAttribute("aria-label", `${label}(タップでノートのスタンプを${notes.has(d) ? "外す" : "押す"})`)
+          cell.addEventListener("click", () => setNote(d, !notes.has(d)))
+        }
+        calGridEl.appendChild(cell)
+      }
+
+      // 今日のノートのボタン
+      const todayIn = today >= ODAI_START_DATE && today <= ODAI_END_DATE
+      noteTodayBtn.hidden = !todayIn
+      noteTodayBtn.classList.toggle("done", notes.has(today))
+      noteTodayBtn.textContent = notes.has(today) ? "✓ 今日のノート、記録ずみ" : "今日、ノートに書いた!"
+      noteTodayBtn.onclick = () => setNote(today, !notes.has(today))
+
+      renderWeekProgress(records, notes)
+    }
+
+    // 今週の取り組み(アプリの記録 / ノートの記録)
+    function renderWeekProgress(records, notes) {
+      const week = odaiWeeks().find((w) => w.week === odaiWeekOf(odaiBaseDate()))
+      const total = week.days.length
+      const appDays = week.days.filter((o) => records.has(o.date)).length
+      const noteDays = week.days.filter((o) => notes.has(o.date)).length
+      weekProgressEl.innerHTML = ""
+      const title = document.createElement("p")
+      title.className = "week-progress-title"
+      title.textContent = `今週の取り組み(WEEK ${week.week})`
+      weekProgressEl.appendChild(title)
+      ;[["📱 アプリの記録", appDays], ["📖 ノートの記録", noteDays]].forEach(([label, n]) => {
+        const row = document.createElement("div")
+        row.className = "progress-row"
+        const head = document.createElement("p")
+        head.className = "progress-head"
+        const name = document.createElement("span")
+        name.textContent = label
+        const count = document.createElement("span")
+        count.className = "progress-count"
+        count.textContent = `${n} / ${total}日`
+        head.appendChild(name)
+        head.appendChild(count)
+        const bar = document.createElement("div")
+        bar.className = "progress-bar"
+        const fill = document.createElement("span")
+        fill.style.width = `${Math.round((n / total) * 100)}%`
+        bar.appendChild(fill)
+        row.appendChild(head)
+        row.appendChild(bar)
+        weekProgressEl.appendChild(row)
+      })
+    }
+
+    // ノートのスタンプを押す/外す
+    async function setNote(date, on) {
+      if (noteBusy) return
+      noteBusy = true
+      noteErrorEl.hidden = true
+      // 先に画面を変えて、失敗したら元に戻す
+      const before = student.note_dates || []
+      student.note_dates = on ? [...before.filter((d) => d !== date), date].sort() : before.filter((d) => d !== date)
+      renderCalendar()
+      try {
+        const updated = await toggleNote(student.id, date, on)
+        applyStudent(updated)
+        if (on && date === todayStr()) fireConfetti()
+      } catch (err) {
+        student.note_dates = before
+        noteErrorEl.textContent = err && err.message ? err.message : "スタンプを押せませんでした。もう一度お試しください。"
+        noteErrorEl.hidden = false
+      } finally {
+        noteBusy = false
+        renderCalendar()
+      }
+    }
+
+    // テーマ一覧(今の週は開いておく。お題は今日の分まで)
+    function renderThemeList() {
+      const listEl = document.getElementById("odai-theme-list")
+      listEl.innerHTML = ""
+      const current = odaiWeekOf(odaiBaseDate())
+      const today = todayStr()
+      const records = recordDates()
+      odaiWeeks().forEach((w) => {
+        const box = document.createElement("details")
+        box.className = "theme-week" + (w.week === current ? " current" : "")
+        if (w.week === current) box.open = true
+        const summary = document.createElement("summary")
+        const label = document.createElement("span")
+        label.className = "theme-week-label"
+        label.textContent = `WEEK ${w.week}${w.week === current ? "・今週" : ""}`
+        const name = document.createElement("span")
+        name.className = "theme-week-name"
+        name.textContent = w.theme
+        const range = document.createElement("span")
+        range.className = "theme-week-range"
+        range.textContent = `${formatMdWeekday(w.start)}〜${formatMdWeekday(w.end)}`
+        summary.appendChild(label)
+        summary.appendChild(name)
+        summary.appendChild(range)
+        box.appendChild(summary)
+        const ul = document.createElement("ul")
+        ul.className = "theme-days"
+        w.days.forEach((o) => {
+          const li = document.createElement("li")
+          const day = document.createElement("span")
+          day.className = "theme-day-date"
+          day.textContent = `${formatMdWeekday(o.date)}${records.has(o.date) ? " 🌸" : ""}`
+          const text = document.createElement("span")
+          text.className = "theme-day-text"
+          text.textContent = o.date <= today ? o.prompt : "(この日のお楽しみ)"
+          if (o.date > today) li.classList.add("future")
+          li.appendChild(day)
+          li.appendChild(text)
+          ul.appendChild(li)
+        })
+        box.appendChild(ul)
+        listEl.appendChild(box)
+      })
+    }
+
+    // ---- わたしの記録(振り返り) ----
+
+    function buildSenseChips(senses) {
+      const wrap = document.createElement("div")
+      wrap.className = "sense-chips"
+      ;(senses || []).forEach((t) => {
+        const sense = senseOf(t)
+        if (!sense) return
+        const chip = document.createElement("span")
+        chip.className = "sense-chip"
+        chip.textContent = `${sense.emoji} ${sense.label}`
+        wrap.appendChild(chip)
+      })
+      return wrap
+    }
+
+    function renderMyRecords() {
+      myRecordsListEl.innerHTML = ""
+      myRecordsEmptyEl.hidden = myRecords.length > 0
+
+      const days = new Set(myRecords.map((r) => r.date)).size
+      myRecordsEmptyEl.textContent = "まだ記録がありません。今日のお題から始めよう。"
+      document.getElementById("my-records").hidden = odaiLocked()
+      if (odaiLocked()) {
+        myRecordsSubEl.textContent = ""
+      } else if (isOdaiMode()) {
+        const odaiDays = new Set(myRecords.filter((r) => odaiOf(r.date)).map((r) => r.date)).size
+        myRecordsSubEl.textContent = myRecords.length > 0
+          ? `お題に答えた日: ${odaiDays}日`
+          : "書いた記録は、ここに並びます。あとから見返して、自分の気持ちの変化に気づこう。"
+      } else {
+        myRecordsSubEl.textContent = myRecords.length > 0
+          ? `${days}日間で、${myRecords.length}個の「好き」を見つけました。`
+          : "書いた記録は、ここに並びます。あとから見返して、自分の「好き」を見つけよう。"
+      }
+
+      // よく感じた五感(五感を記録したものがあれば)
+      const tally = {}
+      myRecords.forEach((r) => (r.senses || []).forEach((t) => (tally[t] = (tally[t] || 0) + 1)))
+      const ranked = Object.entries(tally).sort((a, b) => b[1] - a[1]).slice(0, 3)
+      senseSummaryEl.hidden = ranked.length === 0
+      if (ranked.length) {
+        senseSummaryEl.textContent = "よく感じた五感: " + ranked.map(([t, n]) => `${senseOf(t).emoji}${senseOf(t).label} ${n}回`).join(" / ")
+      }
+
+      let currentDate = null
+      myRecords.forEach((record) => {
+        if (record.date !== currentDate) {
+          currentDate = record.date
+          const head = document.createElement("p")
+          head.className = "record-date"
+          const odai = odaiOf(record.date)
+          const index = dayOffsetFromStart(student.start_date, record.date) + 1
+          head.textContent = odai ? `${formatMdWeekday(record.date)}・WEEK ${odai.week}「${odai.theme}」` : `${formatMdWeekday(record.date)}・${index}日目`
+          myRecordsListEl.appendChild(head)
+        }
+        myRecordsListEl.appendChild(buildMyRecord(record))
+      })
+    }
+
+    function buildMyRecord(record) {
+      const item = document.createElement("article")
+      item.className = "record-item"
+      const odaiLine = buildOdaiLine(record.date)
+      if (odaiLine) item.appendChild(odaiLine)
+
+      const text = document.createElement("p")
+      text.className = "record-text"
+      text.textContent = record.text
+      item.appendChild(text)
+
+      if (record.senses && record.senses.length) item.appendChild(buildSenseChips(record.senses))
+      if (record.feeling) {
+        const feeling = document.createElement("p")
+        feeling.className = "record-feeling"
+        feeling.textContent = record.feeling
+        item.appendChild(feeling)
+      }
+      if (record.photo_url) item.appendChild(buildPostPhoto(record.photo_url))
+      const responses = buildMyResponses(record)
+      if (responses) item.appendChild(responses)
+
+      const actions = document.createElement("div")
+      actions.className = "record-actions"
+      const edit = document.createElement("button")
+      edit.type = "button"
+      edit.className = "btn-link inline"
+      edit.textContent = "書き直す"
+      edit.addEventListener("click", () => startEdit(record))
+      if (!odaiLocked()) actions.appendChild(edit)
+      const del = document.createElement("button")
+      del.type = "button"
+      del.className = "btn-link inline danger"
+      del.textContent = "削除"
+      del.addEventListener("click", async () => {
+        if (!confirm("この記録を削除します。")) return
+        del.disabled = true
+        try {
+          const updated = await deleteRecord(student.id, record.id)
+          if (editingId === record.id) clearForm()
+          applyStudent(updated)
+          renderAll()
+          refreshFeedIfLoaded()
+        } catch (err) {
+          del.disabled = false
+          alert(err && err.message ? err.message : "削除できませんでした")
+        }
+      })
+      actions.appendChild(del)
+      item.appendChild(actions)
+      return item
+    }
+
+    // 自分の記録についた、リアクションの数とコメント(コメントは、押すと開く)
+    const openThreads = new Set() // コメントを開いている記録ID
+
+    function buildMyResponses(record) {
+      const counts = record.counts || {}
+      const comments = record.comments || []
+      const reacted = REACTIONS.filter((r) => counts[r.type] > 0)
+      if (reacted.length === 0 && comments.length === 0) return null
+
+      const wrap = document.createElement("div")
+      wrap.className = "record-responses"
+      if (reacted.length > 0) {
+        const line = document.createElement("p")
+        line.className = "response-counts"
+        line.textContent = reacted.map((r) => `${r.emoji}${r.label} ${counts[r.type]}`).join("  ")
+        wrap.appendChild(line)
+      }
+      if (comments.length > 0) {
+        const isOpen = openThreads.has(record.id)
+        const toggle = document.createElement("button")
+        toggle.type = "button"
+        toggle.className = "btn-link inline response-toggle"
+        toggle.textContent = isOpen ? "コメントを閉じる" : `💬 コメント ${comments.length}件を見る`
+        toggle.addEventListener("click", () => {
+          if (isOpen) openThreads.delete(record.id)
+          else openThreads.add(record.id)
+          wrap.replaceWith(buildMyResponses(record))
+        })
+        wrap.appendChild(toggle)
+        if (isOpen) wrap.appendChild(buildCommentsBlock(record.id, comments, true))
+      }
+      return wrap
+    }
+
+    // ---------------- みんなの記録(同じ期のメンバーだけ) ----------------
+
+    const feedListEl = document.getElementById("feed-list")
+    const feedSectionEl = document.getElementById("feed")
+    const feedTabGateEl = document.getElementById("feed-tab-gate")
+    const feedTabGateTextEl = document.getElementById("feed-tab-gate-text")
+    const feedTabGateBtn = document.getElementById("feed-tab-gate-btn")
+    const feedSubEl = document.getElementById("feed-sub")
+    const feedFilterEl = document.getElementById("feed-filter")
+    const feedGateEl = document.getElementById("feed-gate")
+    const feedLoadingEl = document.getElementById("feed-loading")
+    const feedEmptyEl = document.getElementById("feed-empty")
+    const feedErrorEl = document.getElementById("feed-error")
+    const feedMoreBtn = document.getElementById("feed-more-btn")
+    const feedReloadBtn = document.getElementById("feed-reload-btn")
+
+    let feedLoaded = false // みんなの投稿タブを一度でも開いたか
+    let feedGroup = "" // 見ている人の期(運営なら "運営")
+    let feedPending = false
+    let feedPosts = []
+    let feedComments = {}
+    let feedFilter = "" // 運営の絞り込み(""=すべて)
+    let feedShown = FEED_PAGE_SIZE
+
+    feedTabGateBtn.addEventListener("click", () => showTab("student"))
+
+    function viewerIsStaff() {
+      return feedGroup === STAFF_GROUP || !!(student && student.group === STAFF_GROUP)
+    }
+
+    // 名前の出し方。運営は「運営・かすみん」。運営が見るときと、ほかの期の人(運営の記録へのコメント)には、
+    // 期も付ける(「3期・さくら」)。同じ期の人は名前だけ
+    function nameLabel(name, group) {
+      if (group === STAFF_GROUP) return `${STAFF_GROUP}・${name}`
+      const myGroup = feedGroup || (student && student.group) || ""
+      return group && (viewerIsStaff() || group !== myGroup) ? `${group}・${name}` : name
+    }
+
+    function showFeedTabGate(message, withButton) {
+      feedSectionEl.hidden = true
+      feedTabGateEl.hidden = false
+      feedTabGateTextEl.textContent = message
+      feedTabGateBtn.hidden = !withButton
+    }
+
+    async function initFeedTab() {
+      if (dayOffsetFromStart(PROGRAM_START_DATE) < 0) {
+        showFeedTabGate(`みんなの投稿は、${formatMdWeekday(PROGRAM_START_DATE)}にオープンします。`, false)
+        return
+      }
+      await studentReady
+      if (!student) {
+        showFeedTabGate("まず「わたしの記録」のタブで、お名前を入れてください。", true)
+        return
+      }
+      feedTabGateEl.hidden = true
+      feedSectionEl.hidden = false
+      feedLoaded = true
+      loadFeed()
+    }
+
+    function resetFeed() {
+      feedLoaded = false
+      feedGroup = ""
+      feedPosts = []
+      feedComments = {}
+      feedFilter = ""
+      feedListEl.innerHTML = ""
+    }
+
+    function refreshFeedIfLoaded() {
+      if (feedLoaded) loadFeed(true)
+    }
+
+    // keepShown: 「もっと見る」で広げた件数を保つ(コメントしたあとの読み直しなど)
+    async function loadFeed(keepShown) {
+      feedLoadingEl.hidden = false
+      feedErrorEl.hidden = true
+      try {
+        const data = await fetchFeed(student.id)
+        feedGroup = data.group || ""
+        feedPending = !!data.pending
+        feedPosts = data.posts || []
+        feedComments = data.comments || {}
+        if (keepShown !== true) feedShown = FEED_PAGE_SIZE
+        renderFeed()
+      } catch (err) {
+        feedErrorEl.textContent = "みんなの投稿を読み込めませんでした。少し待ってから、更新ボタンを押してください。"
+        feedErrorEl.hidden = false
+      } finally {
+        feedLoadingEl.hidden = true
+      }
+    }
+
+    // 運営の絞り込み(すべて / 3期 / 4期 …)。運営の記録は、どの期にも出す
+    function renderFeedFilter() {
+      feedFilterEl.hidden = !viewerIsStaff()
+      feedFilterEl.innerHTML = ""
+      if (!viewerIsStaff()) return
+      const groups = groupOptions(feedPosts.map((p) => p.group))
+      ;["", ...groups].forEach((g) => {
+        const btn = document.createElement("button")
+        btn.type = "button"
+        btn.className = "filter-btn" + (g === feedFilter ? " active" : "")
+        btn.textContent = g || "すべて"
+        btn.addEventListener("click", () => {
+          feedFilter = g
+          feedShown = FEED_PAGE_SIZE
+          renderFeed()
+        })
+        feedFilterEl.appendChild(btn)
+      })
+    }
+
+    function renderFeed() {
+      feedListEl.innerHTML = ""
+      // 期が決まるまでは、みんなの投稿は見られない(自分の記録は書ける)
+      feedGateEl.hidden = !!feedGroup
+      feedSubEl.hidden = !feedGroup
+      if (!feedGroup) {
+        feedGateEl.textContent = feedPending
+          ? "期(グループ)を確認しています。運営が確認したら、同じ期のメンバーの投稿が見られるようになります。自分の記録は、「わたしの記録」のタブで、このまま書けます。"
+          : "まだ期(グループ)の設定がありません。運営にお伝えください。設定されると、同じ期のメンバーの投稿が見られるようになります。自分の記録は、「わたしの記録」のタブで、このまま書けます。"
+        feedFilterEl.hidden = true
+        feedEmptyEl.hidden = true
+        feedMoreBtn.hidden = true
+        return
+      }
+      feedSubEl.textContent = viewerIsStaff()
+        ? "運営として、すべての期の記録が見られます。いいねやコメントで一緒に参加できます。"
+        : `${feedGroup}のメンバーと運営の記録です。いいねやコメントを送ろう。`
+      renderFeedFilter()
+      const posts = feedFilter ? feedPosts.filter((p) => p.group === feedFilter || p.group === STAFF_GROUP) : feedPosts
+      feedEmptyEl.hidden = posts.length > 0
+      posts.slice(0, feedShown).forEach((post) => feedListEl.appendChild(buildFeedItem(post)))
+      feedMoreBtn.hidden = posts.length <= feedShown
+    }
+
+    function buildFeedItem(post) {
+      const item = document.createElement("article")
+      item.className = "feed-item"
+      if (post.is_mine) item.classList.add("is-mine")
+      if (post.group === STAFF_GROUP) item.classList.add("is-staff")
+
+      const meta = document.createElement("p")
+      meta.className = "feed-meta"
+      const name = document.createElement("span")
+      name.className = "feed-name"
+      name.textContent = post.is_mine ? `${nameLabel(post.display_name, post.group)}(あなた)` : nameLabel(post.display_name, post.group)
+      meta.appendChild(name)
+      meta.appendChild(document.createTextNode(`・${formatMdWeekday(post.date)}`))
+      item.appendChild(meta)
+
+      const odaiLine = buildOdaiLine(post.date)
+      if (odaiLine) item.appendChild(odaiLine)
+
+      // 本文は textContent で入れる(HTMLとして解釈させない)
+      const body = document.createElement("p")
+      body.className = "feed-text"
+      body.textContent = post.text
+      item.appendChild(body)
+
+      if (post.senses && post.senses.length) item.appendChild(buildSenseChips(post.senses))
+      if (post.feeling) {
+        const feeling = document.createElement("p")
+        feeling.className = "record-feeling"
+        feeling.textContent = post.feeling
+        item.appendChild(feeling)
+      }
+      if (post.photo_url) item.appendChild(buildPostPhoto(post.photo_url))
+
+      item.appendChild(buildReactionBar(post))
+      item.appendChild(buildCommentsBlock(post.id, feedComments[post.id] || [], post.is_mine))
+      return item
+    }
+
+    function buildReactionBar(post) {
+      const bar = document.createElement("div")
+      bar.className = "reaction-bar"
+      REACTIONS.forEach((r) => {
+        const btn = document.createElement("button")
+        btn.type = "button"
+        btn.className = "reaction-btn"
+        btn.dataset.type = r.type
+        if (post.mine.includes(r.type)) btn.classList.add("is-on")
+        btn.disabled = post.is_mine
+        const count = post.counts[r.type] || 0
+        btn.textContent = `${r.emoji} ${r.label}${count > 0 ? " " + count : ""}`
+        btn.addEventListener("click", () => handleReact(post, r.type, bar))
+        bar.appendChild(btn)
+      })
+      return bar
+    }
+
+    // 先に画面を更新して、通信が失敗したときだけ元に戻す(書きかけのコメントが消えないよう、ボタンの列だけ描き直す)
+    async function handleReact(post, type, barEl) {
+      const prev = { counts: { ...post.counts }, mine: [...post.mine] }
+      const on = post.mine.includes(type)
+      post.mine = on ? post.mine.filter((t) => t !== type) : [...post.mine, type]
+      post.counts[type] = Math.max(0, (post.counts[type] || 0) + (on ? -1 : 1))
+      const optimisticBar = buildReactionBar(post)
+      barEl.replaceWith(optimisticBar)
+      try {
+        const result = await reactToPost(student.id, post.id, type)
+        post.counts = result.counts
+        post.mine = result.mine
+      } catch {
+        post.counts = prev.counts
+        post.mine = prev.mine
+      }
+      optimisticBar.replaceWith(buildReactionBar(post))
+    }
+
+    feedMoreBtn.addEventListener("click", () => {
+      feedShown += FEED_PAGE_SIZE
+      renderFeed()
+    })
+    feedReloadBtn.addEventListener("click", () => loadFeed())
+
+    // ---- コメントと返信(みんなの記録・わたしの記録で共通) ----
+
+    // コメントしたり消したりしたあとは、みんなの記録と自分の記録の両方を読み直す
+    async function refreshResponses() {
+      const [fresh] = await Promise.all([getStudentById(student.id).catch(() => null), feedLoaded ? loadFeed(true) : null])
+      if (fresh) {
+        applyStudent(fresh)
+        renderMyRecords()
+      }
+    }
+
+    function buildCommentsBlock(postId, list, isMyRecord) {
+      const wrap = document.createElement("div")
+      wrap.className = "comments"
+
+      const head = document.createElement("p")
+      head.className = "comments-head"
+      head.textContent = list.length > 0 ? `コメント ${list.length}件` : "まだコメントはありません"
+      wrap.appendChild(head)
+
+      const form = buildCommentForm(postId, isMyRecord)
+      list
+        .filter((c) => !c.parent_id)
+        .forEach((c) => {
+          wrap.appendChild(buildComment(c, false, form))
+          list.filter((r) => r.parent_id === c.id).forEach((r) => wrap.appendChild(buildComment(r, true, form)))
+        })
+      wrap.appendChild(form)
+      return wrap
+    }
+
+    function buildComment(c, isReply, form) {
+      const el = document.createElement("div")
+      el.className = "comment" + (isReply ? " reply" : "") + (c.is_mine ? " is-mine" : "")
+
+      const meta = document.createElement("p")
+      meta.className = "comment-meta"
+      // 名前(自分は「あなた」)。記録した本人のコメントには印を付ける
+      const who = c.is_mine ? "あなた" : nameLabel(c.display_name, c.group) + (c.is_author ? "(記録した人)" : "")
+      meta.textContent = `${who}・${formatDateTime(c.created_at)}`
+      el.appendChild(meta)
+
+      const text = document.createElement("p")
+      text.className = "comment-text"
+      text.textContent = c.text
+      el.appendChild(text)
+
+      const actions = document.createElement("div")
+      actions.className = "comment-actions"
+      const replyBtn = document.createElement("button")
+      replyBtn.type = "button"
+      replyBtn.className = "btn-link inline"
+      replyBtn.textContent = "返信する"
+      // 返信への返信は、元のコメントにつなげる
+      replyBtn.addEventListener("click", () => form.setReply({ id: c.parent_id || c.id, text: c.text }))
+      actions.appendChild(replyBtn)
+      if (c.is_mine) {
+        const del = document.createElement("button")
+        del.type = "button"
+        del.className = "btn-link inline danger"
+        del.textContent = "削除"
+        del.addEventListener("click", async () => {
+          if (!confirm("このコメントを削除します。")) return
+          del.disabled = true
+          try {
+            await deleteComment(student.id, c.id)
+            await refreshResponses()
+          } catch (err) {
+            del.disabled = false
+            alert(err && err.message ? err.message : "削除できませんでした")
+          }
+        })
+        actions.appendChild(del)
+      }
+      el.appendChild(actions)
+      return el
+    }
+
+    function buildCommentForm(postId, isMyRecord) {
+      const form = document.createElement("form")
+      form.className = "comment-form"
+      let replyTo = null // 返信先のコメント { id, text }
+
+      const chip = document.createElement("p")
+      chip.className = "reply-chip"
+      chip.hidden = true
+      const chipText = document.createElement("span")
+      chip.appendChild(chipText)
+      const cancel = document.createElement("button")
+      cancel.type = "button"
+      cancel.className = "btn-link inline"
+      cancel.textContent = "やめる"
+      cancel.addEventListener("click", () => form.setReply(null))
+      chip.appendChild(cancel)
+      form.appendChild(chip)
+
+      const row = document.createElement("div")
+      row.className = "comment-row"
+      const input = document.createElement("input")
+      input.type = "text"
+      input.maxLength = MAX_COMMENT_LENGTH
+      input.placeholder = isMyRecord ? "お礼や返信を書く" : "コメントを書く"
+      input.setAttribute("aria-label", "コメント")
+      row.appendChild(input)
+      const send = document.createElement("button")
+      send.type = "submit"
+      send.className = "comment-send"
+      send.textContent = "送信"
+      row.appendChild(send)
+      form.appendChild(row)
+
+      const err = document.createElement("p")
+      err.className = "error"
+      err.hidden = true
+      form.appendChild(err)
+
+      form.setReply = (target) => {
+        replyTo = target
+        chip.hidden = !target
+        if (target) {
+          chipText.textContent = `「${target.text.slice(0, 14)}${target.text.length > 14 ? "…" : ""}」への返信`
+          input.focus()
+        }
+      }
+
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault()
+        const text = input.value.trim()
+        if (!text) return
+        send.disabled = true
+        err.hidden = true
+        try {
+          await addComment(student.id, postId, replyTo ? replyTo.id : "", text)
+          await refreshResponses()
+        } catch (e2) {
+          err.textContent = e2 && e2.message ? e2.message : "送信できませんでした。もう一度お試しください。"
+          err.hidden = false
+          send.disabled = false
+        }
+      })
+      return form
+    }
+
+    // ---------------- 管理者タブ ----------------
+
+    const adminPinGateEl = document.getElementById("admin-pin-gate")
+    const adminContentEl = document.getElementById("admin-content")
+    const pinForm = document.getElementById("pin-form")
+    const pinInput = document.getElementById("pin-input")
+    const pinBtn = document.getElementById("pin-btn")
+    const pinErrorEl = document.getElementById("pin-error")
+
+    const adminLoadingEl = document.getElementById("admin-loading")
+    const adminListEl = document.getElementById("admin-list")
+    const adminErrorEl = document.getElementById("admin-error")
+    const adminSummaryEl = document.getElementById("admin-summary-text")
+    const adminTableBody = document.getElementById("admin-table-body")
+    const adminPostsEl = document.getElementById("admin-posts")
+    const adminRefreshBtn = document.getElementById("admin-refresh-btn")
+
+    let adminPin = null
+
+    function initAdminTab() {
+      if (adminPin) return
+      try {
+        adminPin = sessionStorage.getItem(ADMIN_PIN_KEY)
+      } catch {
+        adminPin = null
+      }
+      if (adminPin) showAdminContent()
+    }
+
+    pinForm.addEventListener("submit", async (e) => {
+      e.preventDefault()
+      pinErrorEl.hidden = true
+      pinBtn.disabled = true
+      try {
+        // 合言葉はサーバーで確認する(合っていれば一覧が返ってくる)
+        const data = await adminList(pinInput.value)
+        adminPin = pinInput.value
+        try {
+          sessionStorage.setItem(ADMIN_PIN_KEY, adminPin)
+        } catch {
+          // 無視
+        }
+        pinInput.value = ""
+        adminPinGateEl.hidden = true
+        adminContentEl.hidden = false
+        renderAdmin(data)
+      } catch (err) {
+        pinErrorEl.textContent = err && err.message ? err.message : "エラーが発生しました"
+        pinErrorEl.hidden = false
+      } finally {
+        pinBtn.disabled = false
+      }
+    })
+
+    async function showAdminContent() {
+      adminPinGateEl.hidden = true
+      adminContentEl.hidden = false
+      adminLoadingEl.hidden = false
+      adminListEl.hidden = true
+      adminErrorEl.hidden = true
+      try {
+        renderAdmin(await adminList(adminPin))
+      } catch (err) {
+        adminLoadingEl.hidden = true
+        adminErrorEl.textContent = err && err.message ? err.message : "読み込めませんでした"
+        adminErrorEl.hidden = false
+        // 合言葉が違っていたら、入力画面に戻す
+        adminPin = null
+        try {
+          sessionStorage.removeItem(ADMIN_PIN_KEY)
+        } catch {
+          // 無視
+        }
+        adminPinGateEl.hidden = false
+      }
+    }
+
+    function cell(text, className) {
+      const td = document.createElement("td")
+      td.textContent = text
+      if (className) td.className = className
+      return td
+    }
+
+    function formatUpdated(iso) {
+      const d = new Date(iso)
+      if (isNaN(d)) return ""
+      const jst = new Date(d.getTime() + 9 * 60 * 60 * 1000)
+      return `${jst.getUTCMonth() + 1}/${jst.getUTCDate()} ${String(jst.getUTCHours()).padStart(2, "0")}:${String(jst.getUTCMinutes()).padStart(2, "0")}`
+    }
+
+    function renderAdmin(data) {
+      adminLoadingEl.hidden = true
+      adminListEl.hidden = false
+
+      const students = data.students.slice().sort((a, b) => b.record_count - a.record_count)
+      adminSummaryEl.textContent = `全${students.length}名 / 記録${data.posts.length}件`
+      adminTableBody.innerHTML = ""
+      students.forEach((s) => {
+        const elapsed = isOdaiMode()
+          ? Math.min(Math.max(dayOffsetFromStart(ODAI_START_DATE) + 1, 0), ODAI_LENGTH)
+          : Math.min(Math.max(dayOffsetFromStart(s.start_date) + 1, 0), PROGRAM_LENGTH)
+        const tr = document.createElement("tr")
+        tr.appendChild(cell(s.display_name))
+        tr.appendChild(cell(s.group || (s.group_candidate ? "確認待ち" : "未設定"), s.group ? "" : "muted"))
+        tr.appendChild(cell(`${elapsed}日目`))
+        const notes = (s.note_dates || []).length
+        tr.appendChild(cell(`${s.record_count}件・${s.record_days}日${isOdaiMode() ? `・ノート${notes}日` : ""}`, "count"))
+        tr.appendChild(cell(formatUpdated(s.updated_at)))
+        adminTableBody.appendChild(tr)
+      })
+
+      // 名簿の人数(期ごと)
+      const groups = {}
+      ;(data.roster || []).forEach((r) => {
+        if (r.group) groups[r.group] = (groups[r.group] || 0) + 1
+      })
+      knownGroups = Object.keys(groups).sort()
+      const summaryGroups = [...groupOptions(knownGroups), ...(groups[STAFF_GROUP] ? [STAFF_GROUP] : [])]
+      rosterSummaryEl.textContent = `登録済み: ${summaryGroups.map((g) => `${g}: ${groups[g] || 0}人`).join(" / ")}`
+      renderRosterGroupOptions()
+
+      adminPostsEl.innerHTML = ""
+      data.posts.forEach((p) => adminPostsEl.appendChild(buildAdminPost(p)))
+
+      renderAdminPending(data.students)
+    }
+
+    // ---- 管理者: 期の確認待ち ----
+
+    const adminPendingEl = document.getElementById("admin-pending")
+    let knownGroups = []
+
+    function renderAdminPending(students) {
+      const pending = students.filter((s) => !s.group)
+      adminPendingEl.innerHTML = ""
+      if (pending.length === 0) {
+        const p = document.createElement("p")
+        p.className = "feed-empty"
+        p.textContent = "確認待ちの受講生はいません"
+        adminPendingEl.appendChild(p)
+        return
+      }
+      const groups = groupOptions(knownGroups)
+      pending.forEach((s) => {
+        const item = document.createElement("div")
+        item.className = "pending-item"
+        const name = document.createElement("p")
+        name.className = "pending-name"
+        name.textContent = s.display_name
+        item.appendChild(name)
+        const hint = document.createElement("p")
+        hint.className = "pending-hint"
+        hint.textContent = s.group_candidate
+          ? `候補: ${s.group_candidate}の「${s.group_candidate_name}」に似ています`
+          : "候補なし(名簿に似た名前がありません)"
+        item.appendChild(hint)
+        const row = document.createElement("div")
+        row.className = "pending-actions"
+        groups.forEach((group) => {
+          const btn = document.createElement("button")
+          btn.type = "button"
+          btn.className = "btn-primary admin-small-btn" + (group === s.group_candidate ? "" : " secondary")
+          btn.textContent = `${group}にする`
+          btn.addEventListener("click", async () => {
+            btn.disabled = true
+            try {
+              await adminSetGroup(adminPin, s.display_name, group)
+              showAdminContent()
+            } catch (err) {
+              adminErrorEl.textContent = err && err.message ? err.message : "登録できませんでした"
+              adminErrorEl.hidden = false
+              btn.disabled = false
+            }
+          })
+          row.appendChild(btn)
+        })
+        item.appendChild(row)
+        adminPendingEl.appendChild(item)
+      })
+    }
+
+    function adminToggleButton(label, onClick) {
+      const btn = document.createElement("button")
+      btn.type = "button"
+      btn.className = "btn-link inline admin-hide-btn"
+      btn.textContent = label
+      btn.addEventListener("click", async () => {
+        btn.disabled = true
+        try {
+          await onClick()
+          showAdminContent()
+        } catch (err) {
+          adminErrorEl.textContent = err && err.message ? err.message : "変更できませんでした"
+          adminErrorEl.hidden = false
+          btn.disabled = false
+        }
+      })
+      return btn
+    }
+
+    function buildAdminPost(p) {
+      const item = document.createElement("article")
+      item.className = "feed-item admin-post"
+      if (p.hidden) item.classList.add("is-hidden")
+
+      const meta = document.createElement("p")
+      meta.className = "feed-meta"
+      const total = Object.values(p.counts).reduce((a, b) => a + b, 0)
+      meta.textContent = `${formatMdWeekday(p.date)}・${p.group || "期未設定"}・${p.display_name}・リアクション${total}件${p.hidden ? "・非表示中" : ""}`
+      item.appendChild(meta)
+      const odaiLine = buildOdaiLine(p.date)
+      if (odaiLine) item.appendChild(odaiLine)
+
+      const body = document.createElement("p")
+      body.className = "feed-text"
+      body.textContent = p.text
+      item.appendChild(body)
+      if (p.senses && p.senses.length) item.appendChild(buildSenseChips(p.senses))
+      if (p.feeling) {
+        const feeling = document.createElement("p")
+        feeling.className = "record-feeling"
+        feeling.textContent = p.feeling
+        item.appendChild(feeling)
+      }
+      if (p.photo_url) {
+        const link = document.createElement("a")
+        link.href = p.photo_url
+        link.target = "_blank"
+        link.rel = "noopener noreferrer"
+        link.className = "btn-link inline"
+        link.textContent = "写真を開く"
+        item.appendChild(link)
+      }
+
+      item.appendChild(adminToggleButton(p.hidden ? "表示に戻す" : "非表示にする", () => adminHidePost(adminPin, p.id, !p.hidden)))
+
+      // 返信は、元のコメントのすぐ下に並べる
+      const all = p.comments || []
+      const ordered = []
+      all.filter((c) => !c.parent_id).forEach((c) => ordered.push(c, ...all.filter((r) => r.parent_id === c.id)))
+      ordered.forEach((c) => {
+        const el = document.createElement("div")
+        el.className = "comment admin-comment" + (c.parent_id ? " reply" : "") + (c.hidden ? " is-hidden" : "")
+        const cm = document.createElement("p")
+        cm.className = "comment-meta"
+        cm.textContent = `${c.display_name}${c.hidden ? "・非表示中" : ""}`
+        el.appendChild(cm)
+        const ct = document.createElement("p")
+        ct.className = "comment-text"
+        ct.textContent = c.text
+        el.appendChild(ct)
+        el.appendChild(adminToggleButton(c.hidden ? "表示に戻す" : "非表示にする", () => adminHideComment(adminPin, c.id, !c.hidden)))
+        item.appendChild(el)
+      })
+      return item
+    }
+
+    adminRefreshBtn.addEventListener("click", showAdminContent)
+
+    // ---- 管理者: 期(グループ)の設定 ----
+
+    const rosterTextEl = document.getElementById("roster-text")
+    const rosterImportBtn = document.getElementById("roster-import-btn")
+    const rosterNameEl = document.getElementById("roster-name")
+    const rosterGroupEl = document.getElementById("roster-group")
+    const rosterSetBtn = document.getElementById("roster-set-btn")
+    const rosterSummaryEl = document.getElementById("roster-summary")
+    const rosterErrorEl = document.getElementById("roster-error")
+    const rosterOkEl = document.getElementById("roster-ok")
+
+    function rosterMessage(ok, message) {
+      rosterOkEl.hidden = !ok
+      rosterErrorEl.hidden = ok
+      ;(ok ? rosterOkEl : rosterErrorEl).textContent = message
+    }
+
+    rosterImportBtn.addEventListener("click", async () => {
+      rosterImportBtn.disabled = true
+      try {
+        const result = await adminImportRoster(adminPin, rosterTextEl.value)
+        rosterTextEl.value = ""
+        rosterMessage(true, `${result.imported}人を登録しました`)
+        showAdminContent()
+      } catch (err) {
+        rosterMessage(false, err && err.message ? err.message : "登録できませんでした")
+      } finally {
+        rosterImportBtn.disabled = false
+      }
+    })
+
+    // 1人登録の期の選択肢(用意した期+名簿にある期+運営+期を外す)
+    function renderRosterGroupOptions() {
+      const current = rosterGroupEl.value
+      rosterGroupEl.innerHTML = ""
+      const options = [["", "期を選ぶ"], ...groupOptions(knownGroups).map((g) => [g, g]), [STAFF_GROUP, STAFF_GROUP], ["__none__", "期を外す"]]
+      options.forEach(([value, label]) => {
+        const opt = document.createElement("option")
+        opt.value = value
+        opt.textContent = label
+        rosterGroupEl.appendChild(opt)
+      })
+      if ([...rosterGroupEl.options].some((o) => o.value === current)) rosterGroupEl.value = current
+    }
+    renderRosterGroupOptions()
+
+    rosterSetBtn.addEventListener("click", async () => {
+      if (!rosterGroupEl.value) {
+        rosterMessage(false, "期を選んでください")
+        return
+      }
+      rosterSetBtn.disabled = true
+      try {
+        const group = rosterGroupEl.value === "__none__" ? "" : rosterGroupEl.value
+        const result = await adminSetGroup(adminPin, rosterNameEl.value, group)
+        rosterNameEl.value = ""
+        rosterGroupEl.value = ""
+        rosterMessage(true, result.group ? `${result.display_name} を ${result.group} に登録しました` : `${result.display_name} の期を外しました`)
+        showAdminContent()
+      } catch (err) {
+        rosterMessage(false, err && err.message ? err.message : "登録できませんでした")
+      } finally {
+        rosterSetBtn.disabled = false
+      }
+    })
+
+    // 起動(みんなの投稿タブは、受講生の読み込みが終わってから使う)
+    const studentReady = initStudentTab()
+  </script>
+</body>
+</html>
