@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>わたし推し活 毎日のお題</title>
+  <title>はじめてのジャーナリング</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700;900&display=swap" />
-  <link rel="stylesheet" href="style.css?v=24" />
+  <link rel="stylesheet" href="style.css?v=25" />
 </head>
 <body>
   <!-- 飾り: 右上の淡いピンクの円と、枝の線画 -->
@@ -54,7 +54,7 @@
       <div id="student-register" hidden>
         <div class="lead hero">
           <p class="eyebrow" id="hero-eyebrow">DECEMBER 2026 – JANUARY 2027</p>
-          <h1 id="hero-title">わたし推し活</h1>
+          <h1 id="hero-title">はじめての<br />ジャーナリング</h1>
           <p class="catch" id="hero-catch">「好き」を見つけて、心のエネルギーチャージ</p>
           <p class="sub" id="hero-sub">小さな「好き」から、自分の気持ちに気づく1か月</p>
         </div>
@@ -63,7 +63,7 @@
 
         <form id="register-form">
           <div class="name-notice">
-            <p class="name-notice-main">📌 わたし推し活のお名前は、SkipFマイページの「呼び名」を入れてください</p>
+            <p class="name-notice-main">📌 お名前は、SkipFマイページの「呼び名」を入れてください</p>
             <p class="name-notice-sub">呼び名は、マイページを開いたときに上に表示されている名前です。</p>
             <p class="name-notice-sub">スマホとパソコンなど別の端末で使うときも、同じ名前を入れれば続きから記録できます。</p>
           </div>
@@ -102,8 +102,6 @@
           <div class="odai-tiles">
             <button type="button" class="odai-tile primary" data-jump="write-panel"><span class="odai-tile-icon" aria-hidden="true">✏️</span>今日のお題</button>
             <button type="button" class="odai-tile" data-jump="odai-calendar"><span class="odai-tile-icon" aria-hidden="true">📅</span>取り組み<br />カレンダー</button>
-            <button type="button" class="odai-tile" data-jump="odai-themes"><span class="odai-tile-icon" aria-hidden="true">📖</span>テーマ一覧</button>
-            <button type="button" class="odai-tile" data-jump="odai-howto"><span class="odai-tile-icon" aria-hidden="true">💡</span>使い方</button>
           </div>
           <button type="button" class="guide-open" data-guide-open>🔰 はじめての方へ(使い方ガイド)</button>
         </section>
@@ -112,7 +110,7 @@
 
         <!-- 記録する -->
         <section class="write-panel" id="write-panel">
-          <p class="write-eyebrow" id="write-eyebrow">わたし推し活｜記録</p>
+          <p class="write-eyebrow" id="write-eyebrow">はじめてのジャーナリング｜記録</p>
           <h2 class="write-title" id="write-title">今日の小さな「好き」</h2>
           <!-- 12/3から: 選んだ日のお題・ヒント・記入例 -->
           <div class="odai-prompt" id="odai-prompt" hidden>
@@ -186,7 +184,6 @@
             <p class="cal-hint" id="cal-hint">書き忘れた日の分は、上のカレンダーの日付をタップすると記録できます。まちがえて押したときは、もう一度押すと消せます。</p>
           </div>
           <p class="error" id="note-error" hidden></p>
-          <div class="week-progress" id="week-progress"></div>
         </section>
 
         <div class="diamond-divider"><span class="diamond"></span></div>
@@ -198,38 +195,6 @@
           <p class="sense-summary" id="sense-summary" hidden></p>
           <div id="my-records-list"></div>
           <p class="feed-empty" id="my-records-empty" hidden>まだ記録がありません。今日の小さな「好き」から始めよう。</p>
-        </section>
-
-        <!-- 12/3から: テーマ一覧 -->
-        <section class="odai-section" id="odai-themes" hidden>
-          <div class="diamond-divider"><span class="diamond"></span></div>
-          <h2 class="feed-title">テーマ一覧</h2>
-          <p class="feed-sub">週ごとのテーマと、今日までのお題です。タップすると開きます。</p>
-          <div id="odai-theme-list"></div>
-        </section>
-
-        <!-- 12/3から: 使い方 -->
-        <section class="odai-section" id="odai-howto" hidden>
-          <div class="diamond-divider"><span class="diamond"></span></div>
-          <h2 class="feed-title">使い方</h2>
-          <ol class="howto-steps">
-            <li><b>ホーム</b>で、今週のテーマを確認</li>
-            <li><b>今日のお題</b>と、書くときのヒントを読む(迷ったら「記入例を見る」)</li>
-            <li>お題への答えを入力し、五感タップ(任意)を選んで<b>「記録を保存する」</b></li>
-            <li>手書きノートを書いた日は、<b>取り組みカレンダー</b>でスタンプを押す</li>
-          </ol>
-          <h3 class="howto-sub">アプリとノートの役割</h3>
-          <div class="role-card">
-            <p class="role-name">📱 アプリ<span>(1日1〜3分程度)</span></p>
-            <p class="role-text">毎日のお題に入力し、自分に意識を向ける習慣をつくる</p>
-          </div>
-          <div class="role-card">
-            <p class="role-name">📖 手書きノート<span>(1日5〜10分程度)</span></p>
-            <p class="role-text">自分の感情や思考を書き出し、問いかけながら、より深く自己理解を進める</p>
-          </div>
-          <p class="howto-note">※ 同じ内容を書く必要はありません。それぞれの役割で、自分のペースで取り組めます。</p>
-          <p class="howto-note">アプリに書いた答えは、同じ期のメンバーと運営の「みんなの投稿」にも表示され、いいねやコメントがもらえます。</p>
-          <button type="button" class="guide-open" data-guide-open>🔰 使い方ガイドをもう一度見る</button>
         </section>
 
         <button type="button" class="btn-link" id="back-to-login-btn">ログイン画面に戻る</button>
@@ -418,15 +383,12 @@
     const odaiExampleBtn = document.getElementById("odai-example-btn")
     const odaiExampleEl = document.getElementById("odai-example")
     const odaiCalendarEl = document.getElementById("odai-calendar")
-    const odaiThemesEl = document.getElementById("odai-themes")
-    const odaiHowtoEl = document.getElementById("odai-howto")
     const calGridEl = document.getElementById("cal-grid")
     const calMonthEl = document.getElementById("cal-month")
     const calPrevBtn = document.getElementById("cal-prev")
     const calNextBtn = document.getElementById("cal-next")
     const noteTodayBtn = document.getElementById("note-today-btn")
     const noteErrorEl = document.getElementById("note-error")
-    const weekProgressEl = document.getElementById("week-progress")
 
     let student = null
     let myRecords = []
@@ -450,7 +412,6 @@
     // 12/3からは、ログイン画面の見出しをお題の期間のものにする(文言は仮。正式に決まったら差し替える)
     if (isOdaiMode()) {
       document.getElementById("hero-eyebrow").textContent = "DECEMBER 2026 – JANUARY 2027"
-      document.getElementById("hero-title").textContent = "わたし推し活"
       document.getElementById("hero-catch").textContent = "毎日のお題で、自分の気持ちに気づく"
       document.getElementById("hero-sub").textContent = "感情・思考・価値観を知って、自分の未来を描く5週間"
     }
@@ -781,7 +742,7 @@
         return
       }
       if (odaiLocked()) {
-        writeEyebrowEl.textContent = "わたし推し活"
+        writeEyebrowEl.textContent = "はじめてのジャーナリング"
         writeTitleEl.hidden = false
         writeTitleEl.textContent = "毎日のお題"
         odaiPromptEl.hidden = true
@@ -812,7 +773,7 @@
 
     // 12/3から: お題に答える形の記録欄
     function renderOdaiWritePanel() {
-      writeEyebrowEl.textContent = "わたし推し活｜今日のお題"
+      writeEyebrowEl.textContent = "はじめてのジャーナリング｜今日のお題"
       writeTitleEl.hidden = !editingId
       writeTitleEl.textContent = "記録を書き直す"
       renderOdaiPrompt()
@@ -1020,7 +981,7 @@
       document.getElementById("write-panel").scrollIntoView({ behavior: "smooth", block: "start" })
     }
 
-    // ---- 12/3から: ホーム・取り組みカレンダー・テーマ一覧・使い方 ----
+    // ---- 12/3から: ホーム・取り組みカレンダー ----
 
     let calMonth = "" // カレンダーで表示している月("2026-12")
     let noteBusy = false
@@ -1049,11 +1010,10 @@
 
     function renderOdai() {
       const on = isOdaiMode() && !odaiLocked()
-      ;[odaiHomeEl, odaiCalendarEl, odaiThemesEl, odaiHowtoEl].forEach((el) => (el.hidden = !on))
+      ;[odaiHomeEl, odaiCalendarEl].forEach((el) => (el.hidden = !on))
       if (!on) return
       renderOdaiHome()
       renderCalendar()
-      renderThemeList()
     }
 
     function renderOdaiHome() {
@@ -1148,42 +1108,6 @@
       noteTodayBtn.classList.toggle("done", notes.has(today))
       noteTodayBtn.textContent = notes.has(today) ? "✓ 今日のノート、記録ずみ" : "今日、ノートに書いた!"
       noteTodayBtn.onclick = () => setNote(today, !notes.has(today))
-
-      renderWeekProgress(records, notes)
-    }
-
-    // 今週の取り組み(アプリの記録 / ノートの記録)
-    function renderWeekProgress(records, notes) {
-      const week = odaiWeeks().find((w) => w.week === odaiWeekOf(odaiBaseDate()))
-      const total = week.days.length
-      const appDays = week.days.filter((o) => records.has(o.date)).length
-      const noteDays = week.days.filter((o) => notes.has(o.date)).length
-      weekProgressEl.innerHTML = ""
-      const title = document.createElement("p")
-      title.className = "week-progress-title"
-      title.textContent = `今週の取り組み(WEEK ${week.week})`
-      weekProgressEl.appendChild(title)
-      ;[["📱 アプリの記録", appDays], ["📖 ノートの記録", noteDays]].forEach(([label, n]) => {
-        const row = document.createElement("div")
-        row.className = "progress-row"
-        const head = document.createElement("p")
-        head.className = "progress-head"
-        const name = document.createElement("span")
-        name.textContent = label
-        const count = document.createElement("span")
-        count.className = "progress-count"
-        count.textContent = `${n} / ${total}日`
-        head.appendChild(name)
-        head.appendChild(count)
-        const bar = document.createElement("div")
-        bar.className = "progress-bar"
-        const fill = document.createElement("span")
-        fill.style.width = `${Math.round((n / total) * 100)}%`
-        bar.appendChild(fill)
-        row.appendChild(head)
-        row.appendChild(bar)
-        weekProgressEl.appendChild(row)
-      })
     }
 
     // ノートのスタンプを押す/外す
@@ -1207,51 +1131,6 @@
         noteBusy = false
         renderCalendar()
       }
-    }
-
-    // テーマ一覧(今の週は開いておく。お題は今日の分まで)
-    function renderThemeList() {
-      const listEl = document.getElementById("odai-theme-list")
-      listEl.innerHTML = ""
-      const current = odaiWeekOf(odaiBaseDate())
-      const today = todayStr()
-      const records = recordDates()
-      odaiWeeks().forEach((w) => {
-        const box = document.createElement("details")
-        box.className = "theme-week" + (w.week === current ? " current" : "")
-        if (w.week === current) box.open = true
-        const summary = document.createElement("summary")
-        const label = document.createElement("span")
-        label.className = "theme-week-label"
-        label.textContent = `WEEK ${w.week}${w.week === current ? "・今週" : ""}`
-        const name = document.createElement("span")
-        name.className = "theme-week-name"
-        name.textContent = w.theme
-        const range = document.createElement("span")
-        range.className = "theme-week-range"
-        range.textContent = `${formatMdWeekday(w.start)}〜${formatMdWeekday(w.end)}`
-        summary.appendChild(label)
-        summary.appendChild(name)
-        summary.appendChild(range)
-        box.appendChild(summary)
-        const ul = document.createElement("ul")
-        ul.className = "theme-days"
-        w.days.forEach((o) => {
-          const li = document.createElement("li")
-          const day = document.createElement("span")
-          day.className = "theme-day-date"
-          day.textContent = `${formatMdWeekday(o.date)}${records.has(o.date) ? " 🌸" : ""}`
-          const text = document.createElement("span")
-          text.className = "theme-day-text"
-          text.textContent = o.date <= today ? o.prompt : "(この日のお楽しみ)"
-          if (o.date > today) li.classList.add("future")
-          li.appendChild(day)
-          li.appendChild(text)
-          ul.appendChild(li)
-        })
-        box.appendChild(ul)
-        listEl.appendChild(box)
-      })
     }
 
     // ---- わたしの記録(振り返り) ----
