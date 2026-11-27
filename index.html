@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700;900&display=swap" />
-  <link rel="stylesheet" href="style.css?v=23" />
+  <link rel="stylesheet" href="style.css?v=24" />
 </head>
 <body>
   <!-- 飾り: 右上の淡いピンクの円と、枝の線画 -->
@@ -59,6 +59,8 @@
           <p class="sub" id="hero-sub">小さな「好き」から、自分の気持ちに気づく1か月</p>
         </div>
 
+        <p class="about-app">毎日ひとつ届くお題に答えながら、自分の気持ちや考えに気づいていく、SkipF 5期のみなさんのためのアプリです。1日1〜3分でOK。</p>
+
         <form id="register-form">
           <div class="name-notice">
             <p class="name-notice-main">📌 わたし推し活のお名前は、SkipFマイページの「呼び名」を入れてください</p>
@@ -103,6 +105,7 @@
             <button type="button" class="odai-tile" data-jump="odai-themes"><span class="odai-tile-icon" aria-hidden="true">📖</span>テーマ一覧</button>
             <button type="button" class="odai-tile" data-jump="odai-howto"><span class="odai-tile-icon" aria-hidden="true">💡</span>使い方</button>
           </div>
+          <button type="button" class="guide-open" data-guide-open>🔰 はじめての方へ(使い方ガイド)</button>
         </section>
 
         <div class="diamond-divider"><span class="diamond"></span></div>
@@ -168,6 +171,7 @@
         <section class="odai-section" id="odai-calendar" hidden>
           <div class="diamond-divider"><span class="diamond"></span></div>
           <h2 class="feed-title">取り組みカレンダー</h2>
+          <p class="feed-sub">毎日の取り組みが、ここにたまっていきます。アプリで答えた日は🌸、手書きノートを書いた日は📖がつきます。</p>
           <div class="cal-nav">
             <button type="button" class="cal-nav-btn" id="cal-prev" aria-label="前の月">‹</button>
             <p class="cal-month" id="cal-month"></p>
@@ -225,6 +229,7 @@
           </div>
           <p class="howto-note">※ 同じ内容を書く必要はありません。それぞれの役割で、自分のペースで取り組めます。</p>
           <p class="howto-note">アプリに書いた答えは、同じ期のメンバーと運営の「みんなの投稿」にも表示され、いいねやコメントがもらえます。</p>
+          <button type="button" class="guide-open" data-guide-open>🔰 使い方ガイドをもう一度見る</button>
         </section>
 
         <button type="button" class="btn-link" id="back-to-login-btn">ログイン画面に戻る</button>
@@ -316,6 +321,22 @@
           <button type="button" class="btn-primary admin-refresh" id="admin-refresh-btn">再読み込み</button>
         </div>
         <p class="error" id="admin-error" hidden></p>
+      </div>
+    </div>
+
+    <!-- はじめての人向けの使い方ガイド(その端末で最初にログインしたときだけ自動で出る。ホームの「はじめての方へ」から何度でも見られる) -->
+    <div class="guide-overlay" id="guide" hidden>
+      <div class="guide-card" role="dialog" aria-modal="true" aria-labelledby="guide-title">
+        <button type="button" class="guide-close" id="guide-close" aria-label="ガイドを閉じる">×</button>
+        <p class="guide-step" id="guide-step"></p>
+        <p class="guide-icon" id="guide-icon" aria-hidden="true"></p>
+        <h2 class="guide-title" id="guide-title"></h2>
+        <p class="guide-text" id="guide-text"></p>
+        <div class="guide-dots" id="guide-dots" aria-hidden="true"></div>
+        <div class="guide-actions">
+          <button type="button" class="guide-back" id="guide-back">戻る</button>
+          <button type="button" class="btn-primary guide-next" id="guide-next"></button>
+        </div>
       </div>
     </div>
   </main>
@@ -475,6 +496,7 @@
         studentLoadingEl.hidden = true
         studentRegisterEl.hidden = true
         studentCardEl.hidden = false
+        maybeShowGuide()
         return
       }
 
@@ -493,6 +515,96 @@
       studentCardEl.hidden = true
       studentRegisterEl.hidden = false
     }
+
+    // ---- はじめての人向けの使い方ガイド ----
+
+    const GUIDE_SEEN_KEY = STORAGE_PREFIX + "guide_seen"
+    const GUIDE_STEPS = [
+      {
+        icon: "✏️",
+        title: "毎日ひとつ、お題が届きます",
+        text: "「今日のお題」に、思いついたまま答えるだけでOK。短い文章でも大丈夫です(1日1〜3分)。五感タップや写真は、つけたいときだけで大丈夫です。",
+      },
+      {
+        icon: "📖",
+        title: "ノートを書いた日は、スタンプ",
+        text: "紙のノートは、気持ちや考えをじっくり書き出す場所です(1日5〜10分)。書いた日は「今日、ノートに書いた!」を押すと、カレンダーに📖がつきます。アプリと同じことを書かなくて大丈夫です。",
+      },
+      {
+        icon: "💗",
+        title: "5期のみんなと応援し合おう",
+        text: "アプリに書いた答えは、5期のメンバーと運営の「みんなの投稿」に、お名前つきで届きます。いいねやコメントで、おたがいに応援し合いましょう。",
+      },
+    ]
+    const guideEl = document.getElementById("guide")
+    const guideNextEl = document.getElementById("guide-next")
+    const guideBackEl = document.getElementById("guide-back")
+    let guideIndex = 0
+
+    function renderGuide() {
+      const step = GUIDE_STEPS[guideIndex]
+      const last = guideIndex === GUIDE_STEPS.length - 1
+      document.getElementById("guide-step").textContent = `使い方ガイド ${guideIndex + 1} / ${GUIDE_STEPS.length}`
+      document.getElementById("guide-icon").textContent = step.icon
+      document.getElementById("guide-title").textContent = step.title
+      document.getElementById("guide-text").textContent = step.text
+      const dots = document.getElementById("guide-dots")
+      dots.innerHTML = ""
+      GUIDE_STEPS.forEach((_, i) => {
+        const dot = document.createElement("span")
+        if (i === guideIndex) dot.className = "on"
+        dots.appendChild(dot)
+      })
+      guideBackEl.style.visibility = guideIndex === 0 ? "hidden" : "visible"
+      guideNextEl.textContent = last ? "さっそく今日のお題へ" : "次へ"
+    }
+
+    function openGuide() {
+      guideIndex = 0
+      renderGuide()
+      guideEl.hidden = false
+      document.body.classList.add("guide-showing")
+      guideNextEl.focus()
+    }
+
+    function closeGuide(goToWrite) {
+      guideEl.hidden = true
+      document.body.classList.remove("guide-showing")
+      try {
+        localStorage.setItem(GUIDE_SEEN_KEY, "1")
+      } catch {
+        // 無視
+      }
+      if (goToWrite) document.getElementById("write-panel").scrollIntoView({ behavior: "smooth", block: "start" })
+    }
+
+    // その端末で、はじめてログインしたときだけ出す(5期以外の人と、オープン前は出さない)
+    function maybeShowGuide() {
+      if (odaiLocked() || todayOffset < 0) return
+      let seen = false
+      try {
+        seen = localStorage.getItem(GUIDE_SEEN_KEY) === "1"
+      } catch {
+        // 無視
+      }
+      if (!seen) openGuide()
+    }
+
+    guideNextEl.addEventListener("click", () => {
+      if (guideIndex === GUIDE_STEPS.length - 1) return closeGuide(true)
+      guideIndex++
+      renderGuide()
+    })
+    guideBackEl.addEventListener("click", () => {
+      if (guideIndex === 0) return
+      guideIndex--
+      renderGuide()
+    })
+    document.getElementById("guide-close").addEventListener("click", () => closeGuide(false))
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && !guideEl.hidden) closeGuide(false)
+    })
+    document.querySelectorAll("[data-guide-open]").forEach((btn) => btn.addEventListener("click", openGuide))
 
     function applyStudent(s) {
       student = s
