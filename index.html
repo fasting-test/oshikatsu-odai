@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700;900&display=swap" />
-  <link rel="stylesheet" href="style.css?v=25" />
+  <link rel="stylesheet" href="style.css?v=26" />
 </head>
 <body>
   <!-- 飾り: 右上の淡いピンクの円と、枝の線画 -->
@@ -177,6 +177,7 @@
           </div>
           <div class="cal-grid" id="cal-grid"></div>
           <p class="cal-legend"><span>🌸 アプリで記録した日</span><span>📖 手書きノートを書いた日</span></p>
+          <ul class="cal-themes" id="cal-themes" aria-label="週ごとのテーマ"></ul>
           <div class="note-check">
             <p class="note-check-title">📖 手書きノートのチェック</p>
             <p class="note-check-text">紙のノートに書いた日は、下のボタンを押して記録しよう。(アプリに書いた日は、自動で🌸がつきます)</p>
@@ -479,7 +480,8 @@
 
     // ---- はじめての人向けの使い方ガイド ----
 
-    const GUIDE_SEEN_KEY = STORAGE_PREFIX + "guide_seen"
+    const GUIDE_COUNT_KEY = STORAGE_PREFIX + "guide_count" // その端末で、ガイドを自動で出した回数
+    const GUIDE_AUTO_TIMES = 3 // アプリを開いて、最初の3回だけ自動で出す
     const GUIDE_STEPS = [
       {
         icon: "✏️",
@@ -531,24 +533,28 @@
     function closeGuide(goToWrite) {
       guideEl.hidden = true
       document.body.classList.remove("guide-showing")
-      try {
-        localStorage.setItem(GUIDE_SEEN_KEY, "1")
-      } catch {
-        // 無視
-      }
       if (goToWrite) document.getElementById("write-panel").scrollIntoView({ behavior: "smooth", block: "start" })
     }
 
-    // その端末で、はじめてログインしたときだけ出す(5期以外の人と、オープン前は出さない)
+    // その端末でアプリを開いた最初の3回だけ、自動で出す(5期以外の人と、オープン前は出さない)。
+    // 1回開いているあいだに何度もログインし直しても、数えるのは1回だけ
+    let guideChecked = false
     function maybeShowGuide() {
-      if (odaiLocked() || todayOffset < 0) return
-      let seen = false
+      if (guideChecked || odaiLocked() || todayOffset < 0) return
+      guideChecked = true
+      let count = 0
       try {
-        seen = localStorage.getItem(GUIDE_SEEN_KEY) === "1"
+        count = Number(localStorage.getItem(GUIDE_COUNT_KEY)) || 0
       } catch {
         // 無視
       }
-      if (!seen) openGuide()
+      if (count >= GUIDE_AUTO_TIMES) return
+      try {
+        localStorage.setItem(GUIDE_COUNT_KEY, String(count + 1))
+      } catch {
+        // 無視
+      }
+      openGuide()
     }
 
     guideNextEl.addEventListener("click", () => {
@@ -1082,6 +1088,7 @@
         const cell = document.createElement(canTap ? "button" : "span")
         cell.className = "cal-day"
         if (!inRange) cell.classList.add("out")
+        else cell.classList.add(`wk${odaiWeekOf(d)}`)
         if (d === today) cell.classList.add("today")
         if (records.has(d)) cell.classList.add("has-record")
         if (notes.has(d)) cell.classList.add("has-note")
@@ -1102,12 +1109,45 @@
         calGridEl.appendChild(cell)
       }
 
+      renderCalThemes()
+
       // 今日のノートのボタン
       const todayIn = today >= ODAI_START_DATE && today <= ODAI_END_DATE
       noteTodayBtn.hidden = !todayIn
       noteTodayBtn.classList.toggle("done", notes.has(today))
       noteTodayBtn.textContent = notes.has(today) ? "✓ 今日のノート、記録ずみ" : "今日、ノートに書いた!"
       noteTodayBtn.onclick = () => setNote(today, !notes.has(today))
+    }
+
+    // カレンダーの下の、週ごとのテーマ(マスの色と同じ色の丸つき)
+    function renderCalThemes() {
+      const listEl = document.getElementById("cal-themes")
+      listEl.innerHTML = ""
+      const current = odaiWeekOf(odaiBaseDate())
+      odaiWeeks().forEach((w) => {
+        const li = document.createElement("li")
+        li.className = `wk${w.week}` + (w.week === current ? " current" : "")
+        const dot = document.createElement("span")
+        dot.className = "cal-theme-dot"
+        dot.setAttribute("aria-hidden", "true")
+        const body = document.createElement("span")
+        body.className = "cal-theme-body"
+        const label = document.createElement("span")
+        label.className = "cal-theme-week"
+        label.textContent = `WEEK ${w.week}${w.week === current ? "・今週" : ""}`
+        const name = document.createElement("span")
+        name.className = "cal-theme-name"
+        name.textContent = w.theme
+        const range = document.createElement("span")
+        range.className = "cal-theme-range"
+        range.textContent = `${formatMdWeekday(w.start)}〜${formatMdWeekday(w.end)}`
+        body.appendChild(label)
+        body.appendChild(name)
+        body.appendChild(range)
+        li.appendChild(dot)
+        li.appendChild(body)
+        listEl.appendChild(li)
+      })
     }
 
     // ノートのスタンプを押す/外す

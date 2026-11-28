@@ -1674,6 +1674,81 @@ span.cal-day {
   background: var(--surface-2);
 }
 
+/* 週ごとの色(カレンダーのマスと、下のテーマ一覧の丸) */
+.wk1 { --wk: #f6dfe3; }
+.wk2 { --wk: #dde9f4; }
+.wk3 { --wk: #e1efdc; }
+.wk4 { --wk: #f6e8d3; }
+.wk5 { --wk: #e9e1f3; }
+
+.cal-day[class*="wk"] {
+  background: var(--wk);
+}
+
+.cal-day.today {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
+}
+
+.cal-themes {
+  list-style: none;
+  margin: 0 0 16px;
+  padding: 12px 14px;
+  border-radius: 16px;
+  background: var(--surface-1);
+  box-shadow: var(--glow-shadow);
+}
+
+.cal-themes li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 7px 0;
+}
+
+.cal-themes li + li {
+  border-top: 1px dashed var(--border);
+}
+
+.cal-theme-dot {
+  flex: none;
+  width: 16px;
+  height: 16px;
+  margin-top: 3px;
+  border-radius: 5px;
+  background: var(--wk);
+}
+
+.cal-theme-body {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 8px;
+}
+
+.cal-theme-week {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+}
+
+.cal-theme-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.cal-theme-range {
+  width: 100%;
+  font-size: 11.5px;
+  color: var(--text-secondary);
+}
+
+.cal-themes li.current .cal-theme-week {
+  color: var(--accent);
+}
+
 .cal-num {
   font-size: 13px;
   font-weight: 700;
